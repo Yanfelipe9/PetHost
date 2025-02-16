@@ -1,0 +1,41 @@
+.aside {
+    border-radius: 8px;
+    background: #171D1F;
+    padding: 40px 16px;
+    height: 100%;
+}
+.aside ul {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 40px;
+}
+
+.imagenLogo{
+    border-radius: 20%;
+
+}
+
+
+.avatarContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 10px 0;
+}
+
+.imageAvatar {
+    border-radius: 50%;
+    border: 3px solid #fff;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.imageAvatar:hover {
+    transform: scale(1.1);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.5);
+}
