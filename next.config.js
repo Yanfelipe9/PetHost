@@ -18,7 +18,16 @@ const nextConfig = {
                 pathname: '**',
             },
         ],
-    }
+    },
+    async redirects() {
+        return [
+          {
+            source: '/',
+            destination: '/signin',
+            permanent: true, // Define como redirecionamento permanente (301)
+          },
+        ];
+      },
 }
 
 module.exports = nextConfig
