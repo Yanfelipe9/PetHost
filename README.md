@@ -1,50 +1,109 @@
-![](thumbnail.png)
+# PetHost
 
-![](https://img.shields.io/github/license/alura-cursos/android-com-kotlin-personalizando-ui)
+Bem-vindo ao **PetHost**! Este projeto utiliza **Next.js**, **Prisma** e **NextAuth** para gerenciamento de autenticação e banco de dados.
 
-# Título do Curso: Next.js: estratégias de componentes Server-Side
+## 🚀 Como iniciar o projeto
 
-Curso prático de Next.js focado em Server-Side Rendering (SSR) e desenvolvimento de aplicativos web modernos.
+### 1️⃣ **Pré-requisitos**
+Certifique-se de ter instalado os seguintes itens:
+- [Docker](https://www.docker.com/)
+- [Node.js](https://nodejs.org/) (recomendado: **18+**)
+- [Yarn](https://yarnpkg.com/) ou [npm](https://www.npmjs.com/)
 
-## 🔨 Funcionalidades do Projeto
+### 2️⃣ **Subir o banco de dados**
+Antes de tudo, é necessário rodar o banco de dados com Docker:
 
-O curso abrange o desenvolvimento de um blog dinâmico com funcionalidades como:
+```sh
+docker-compose up -d
+```
 
-- Listagem de posts com paginação.
-- Exibição detalhada de cada post.
-- Renderização do lado do servidor.
-- Roteamento com App Router.
-- Integração com APIs usando fetch
+Isso iniciará o banco de dados em segundo plano.
 
-## ✔️ Técnicas e Tecnologias Utilizadas
+### 3️⃣ **Instalar as dependências**
+Execute o seguinte comando para instalar as dependências do projeto:
 
-As principais técnicas e tecnologias abordadas são:
+```sh
+yarn install
+# ou
+npm install
+```
 
-- `Next.js`: Framework para React com recursos de SSR.
-- `Fetch API`: Realizar requisições HTTP para buscar dados.
-- `remark`: Biblioteca para processamento de Markdown em HTML.
-- `winston`: Logging avançado com diferentes níveis e transportes.
-- `React Components`: Desenvolvimento de componentes reutilizáveis.
-- `CSS Modules`: Estilização modular e escopada.
-- `Client-Side Navigation`: Navegação eficiente entre páginas com Next.js.
+### 4️⃣ **Rodar as migrações do Prisma**
+Depois que o banco estiver rodando, aplique as migrações do **Prisma** e gere o client:
 
-## 🎯 Desafios do Curso
+```sh
+yarn prisma:migrate
+# ou
+npm run prisma:migrate
+```
 
-Implementação de funcionalidades avançadas, como:
+Gerar o cliente Prisma:
 
-- Consumo de uma API de posts.
-- Renderização de Markdown em componentes React.
-- Gerenciamento de logs e erros.
+```sh
+yarn prisma:generate
+# ou
+npm run prisma:generate
+```
 
-## 🛠️ Abrir e Rodar o Projeto
+### 6️⃣ **Rodar o projeto em modo desenvolvimento**
+Agora, inicie o servidor Next.js:
 
-Após baixar o projeto, você pode abrir com seu editor de código preferido. Siga estes passos:
+```sh
+yarn dev
+# ou
+npm run dev
+```
 
-- Abra o terminal no diretório do projeto.
-- Execute `npm install` para instalar as dependências.
-- Inicie o servidor de desenvolvimento com `npm run dev`.
-- Acesse `http://localhost:3000` no navegador para ver o projeto.
+O projeto estará disponível em **`http://localhost:3000`**.
 
-## 📚 Mais Informações do Curso
+---
 
-Interessado em aprofundar seus conhecimentos em Next.js e SSR? [Acesse o curso]() que desenvolve este projeto desde o início!
+## 🛠 **Comandos úteis**
+
+### 🔹 **Criar uma nova migração**
+```sh
+yarn prisma:migrate --name nome_da_migracao
+# ou
+npm run prisma:migrate --name nome_da_migracao
+```
+
+### 🔹 **Rodar a aplicação em produção**
+```sh
+yarn build && yarn start
+# ou
+npm run build && npm run start
+```
+
+---
+
+## 📝 **Configuração do ambiente**
+Antes de rodar o projeto, crie um arquivo **`.env`** na raiz do projeto e configure as variáveis de ambiente:
+
+```env
+DATABASE_URL="postgresql://user:password@localhost:5432/code_connect"
+NEXTAUTH_SECRET="sua_chave_secreta"
+NEXTAUTH_URL="http://localhost:3000"
+```
+
+---
+
+## 📌 **Dicas**
+- Certifique-se de que o **Docker** está rodando antes de iniciar o banco.
+- Caso o banco já esteja rodando e você precise reiniciar as migrações, use:
+  ```sh
+  yarn prisma migrate reset
+  # ou
+  npm run prisma migrate reset
+  ```
+- Se houver erros de conexão com o banco, verifique se o contêiner está ativo com:
+  ```sh
+  docker ps
+  ```
+
+---
+
+## 🎯 **Sobre o projeto**
+Este projeto foi desenvolvido utilizando **Next.js 14**, **Prisma ORM**, **NextAuth** para autenticação e **Docker** para facilitar a execução do banco de dados.
+
+Se tiver dúvidas ou precisar de suporte, entre em contato! 🚀
+
