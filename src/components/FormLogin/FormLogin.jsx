@@ -2,8 +2,7 @@
 
 import styles from './form-login.module.css'
 import { Label } from '@/components/Label'
-import { Button } from '@/components/Button'
-import { ArrowFoward } from '@/components/icons/ArrowFoward'
+import { Button } from 'antd'
 import { useState } from 'react'
 import { Input } from '../input/input'
 import { signIn } from 'next-auth/react'
@@ -53,9 +52,12 @@ export default function FormLogin() {
                 />
             </div>
             <div className={styles.action}>
-                <Button type="submit">
-                    Login <ArrowFoward />
-                </Button>
+                <Button
+                    type="primary"
+                    htmlType="submit"
+                >
+                    Entrar
+                </Button>      
             </div>
         </form>
     )
