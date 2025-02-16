@@ -6,7 +6,7 @@ import { SessionProvider } from "next-auth/react"
 import { options } from './api/auth/[...nextauth]/options'
 import { auth } from './api/auth/[...nextauth]/route'
 import AuthProvider from '@/components/AuthProvider'
-
+import { AntdRegistry } from '@ant-design/nextjs-registry';
 // export const metadata = {
 //   title: 'Code Connect',
 //   description: 'Uma rede social para devs!',
@@ -30,7 +30,9 @@ export default async function RootLayout({ children }) {
 
       <body>
         <AuthProvider>
+        <AntdRegistry>
           {children}
+        </AntdRegistry>
         </AuthProvider>
       </body>
 

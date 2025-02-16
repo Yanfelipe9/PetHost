@@ -15,6 +15,7 @@
     "seed": "node prisma/seed.js"
   },
   "dependencies": {
+    "@ant-design/nextjs-registry": "^1.0.2",
     "@auth/prisma-adapter": "^2.5.3",
     "@prisma/client": "^5.20.0",
     "@vercel/blob": "^0.24.0",
