@@ -1,12 +1,12 @@
 .btn {
-    color: #132E35;
+    color: #fff;
+    background: #1677ff;
     text-align: center;
     font-size: 18px;
     font-style: normal;
     font-weight: 600;
     line-height: 150%; /* 27px */
     border-radius: 8px;
-    background: #81FE88;
     padding: 12px 16px;
     cursor: pointer;
     border: none;

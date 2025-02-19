@@ -47,17 +47,24 @@ export default function FormLogin() {
                     id="password"
                     type="password"
                     required
+                    placeholder="Digite sua Senha"
                     onChange={event => setPassword(event.target.value)}
                     value={password}
                 />
             </div>
             <div className={styles.action}>
-                <Button
+                <button 
+                    type='primary'
+                    htmlType='submit'
+                    className={styles.buttonCustom}>
+                    Entrar
+                </button>
+                {/* <Button
                     type="primary"
                     htmlType="submit"
                 >
                     Entrar
-                </Button>      
+                </Button>       */}
             </div>
         </form>
     )
