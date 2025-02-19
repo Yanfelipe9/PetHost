@@ -1,47 +1,105 @@
 .main {
-    display: flex;
-    gap: 55px;
-    flex-wrap: wrap;
+  display: flex;
+  height: 100vh;
+  align-items: center;
+  justify-content: center;
+  background-color: #f5f5f5;
+}
+
+.container_left{
+  width: 70%;
+  height: 100%;
+  background-color: #80aef7;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 20px;
+  color: white;
+}
+
+.container_left h1 {
+  font-family: Inter;
+  font-weight: 500;
+  font-size: 70px;
+  line-height: 84.72px;
+  letter-spacing: 0%;
+  text-align: center;
+
+  width: 307px;
+  height: 181px;
+  color: rgba(10, 83, 185, 1);
+
+}
+
+.container_left h2 {
+  width: 459px;
+  height: 348px;
+  top: 267px;
+  left: 141px;
+  font-family: Inter;
+  font-weight: 500;
+  font-size: 32px;
+  line-height: 38.73px;
+  letter-spacing: 0%;
+
 }
 
 .container {
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 28px;
+  width: 60%;
+  height: 100%;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
-.form {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
+.container h1 {
+  font-family: Inter;
+  font-weight: 500;
+  font-size: 40px;
+  line-height: 60px;
+  letter-spacing: 0%;
+  color: black;
 }
 
-.form .action {
-    margin-top: 16px;
-    display: flex;
-    justify-content: center;
+
+.container h2 {
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+  color: black;
 }
 
-.providers {
-    display: flex;
-    flex-direction: column;
+.container p {
+  margin-top: 10px;
+  font-size: 0.9rem;
+}
+
+.container a {
+  color: #1e4db7;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.container a:hover {
+  text-decoration: underline;
 }
 
 .footer p {
-    font-size: 18px;
-    margin: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    color: #E1E1E1;
-    font-weight: 400;
+  font-size: 0.9rem;
+  margin-top: 10px;
 }
 
-.footer p a {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    text-decoration: none;
+.form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+}
+
+.action {
+  padding: 25px;
 }

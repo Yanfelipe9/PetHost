@@ -1,5 +1,3 @@
-import Image from 'next/image'
-import banner from './banner-signon.png'
 import styles from './signon.module.css'
 import { Label } from '@/components/Label'
 import { Button } from '@/components/Button'
@@ -14,8 +12,9 @@ import { Input } from '@/components/input/input'
 export default async function SignOn() {
   return (
     <main className={styles.main}>
-      <div>
-        <Image src={banner} alt='Banner' priority />
+      <div className={styles.container_left}>
+        <h1>PetHost</h1>
+        <h2>Seu pet merece o melhor descanso, onde ele também se sente em casa!</h2>
       </div>
       <div className={styles.container}>
         <h1>
@@ -56,25 +55,17 @@ export default async function SignOn() {
               name="password" 
               id="password" 
               type="password" 
+              placeholder="Digite sua senha"
               required 
             />
-            <Checkbox label="Li e aceito os termos de uso" required />
           </div>
           <div className={styles.action}>
             <Button type="submit">
-              Cadastrar <ArrowFoward />
+              Cadastrar 
             </Button>
           </div>
         </form>
-        <div className={styles.providers}>
-          <TextDivider text="ou entre com outras contas" />
-          <Providers />
-        </div>
-        <footer className={styles.footer}>
-          <p>
-            Já tem conta? <Link href='/signin'>Faça seu login! <Login color="#81FE88" /></Link>
-          </p>
-        </footer>
+        
       </div>
     </main>
   )

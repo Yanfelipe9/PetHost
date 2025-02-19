@@ -1,13 +1,3 @@
-.container {
-    background-color: #171D1F;
-    border-radius: 32px;
-    border: 1px solid #00090E;
-    padding: 56px 78px;
-    width: 996px;
-    max-width: 90%;
-    margin: 48px auto;
-}
-
 .container h1,
 .container h2 {
     margin: 0;
