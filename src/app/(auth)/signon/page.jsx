@@ -1,3 +1,5 @@
+import Image  from 'next/image'
+import logo from './d78db4d398303024c2fb933c6c51f79e 1 (Traced).png'
 import styles from './signon.module.css'
 import { Label } from '@/components/Label'
 import { Button } from '@/components/Button'
@@ -13,7 +15,7 @@ export default async function SignOn() {
   return (
     <main className={styles.main}>
       <div className={styles.container_left}>
-        <h1>PetHost</h1>
+        <h1><Image src={logo} alt="Logo PetHost" style={styles.logo} />PetHost</h1>
         <h2>Seu pet merece o melhor descanso, onde ele também se sente em casa!</h2>
       </div>
       <div className={styles.container}>

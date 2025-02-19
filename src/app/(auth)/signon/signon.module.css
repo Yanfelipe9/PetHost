@@ -4,10 +4,11 @@
   align-items: center;
   justify-content: center;
   background-color: #f5f5f5;
+  flex-wrap: wrap;
 }
 
-.container_left{
-  width: 70%;
+.container_left {
+  width: 60%;
   height: 100%;
   background-color: #80aef7;
   display: flex;
@@ -15,39 +16,41 @@
   justify-content: center;
   align-items: center;
   text-align: center;
-  padding: 20px;
+  padding: 5px;
   color: white;
 }
 
 .container_left h1 {
+  display: flex;
+  align-items: center; /* Alinha verticalmente a logo e o texto */
+  gap: 20px; /* Espaço entre a imagem e o texto */
   font-family: Inter;
-  font-weight: 500;
+  font-weight: 500px;
   font-size: 70px;
   line-height: 84.72px;
   letter-spacing: 0%;
   text-align: center;
-
+  margin-left: -150px;
   width: 307px;
   height: 181px;
   color: rgba(10, 83, 185, 1);
-
 }
 
 .container_left h2 {
   width: 459px;
-  height: 348px;
+  height: 300px;
   top: 267px;
   left: 141px;
   font-family: Inter;
-  font-weight: 500;
+  font-weight: 500px;
   font-size: 32px;
   line-height: 38.73px;
   letter-spacing: 0%;
-
+  text-align: left;
 }
 
 .container {
-  width: 60%;
+  width: 40%;
   height: 100%;
   background-color: white;
   display: flex;
@@ -57,12 +60,17 @@
 }
 
 .container h1 {
-  font-family: Inter;
-  font-weight: 500;
-  font-size: 40px;
-  line-height: 60px;
-  letter-spacing: 0%;
-  color: black;
+  width: 231px;
+height: 50px;
+top: 217px;
+left: 799px;
+font-family: Inter;
+font-weight: 500px;
+font-size: 40px;
+line-height: 60px;
+letter-spacing: 0%;
+color: rgba(0, 0, 0, 1);
+
 }
 
 
@@ -101,5 +109,5 @@
 }
 
 .action {
-  padding: 25px;
+  padding: 12px;
 }
