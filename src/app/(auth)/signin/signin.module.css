@@ -24,7 +24,6 @@
   display: flex;
   align-items: center; /* Alinha verticalmente a logo e o texto */
   gap: 20px; /* Espaço entre a imagem e o texto */
-  font-family: Inter;
   font-weight: 500px;
   font-size: 70px;
   line-height: 84.72px;
@@ -41,7 +40,6 @@
   height: 300px;
   top: 267px;
   left: 141px;
-  font-family: Inter;
   font-weight: 500px;
   font-size: 32px;
   line-height: 38.73px;
@@ -61,7 +59,6 @@
 }
 
 .container h1 {
-  font-family: Inter, sans-serif;
   align-items: center;
   font-weight: 500px;
   font-size: 40px;
@@ -142,7 +139,6 @@
   color: #fff;
   border-color: #fff;
   cursor: pointer;
-  font-family: Inter;
   font-weight: 500;
   font-size: 24px;
   line-height: 36px;

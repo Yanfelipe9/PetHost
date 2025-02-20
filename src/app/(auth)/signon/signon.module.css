@@ -24,7 +24,6 @@
   display: flex;
   align-items: center; /* Alinha verticalmente a logo e o texto */
   gap: 20px; /* Espaço entre a imagem e o texto */
-  font-family: Inter;
   font-weight: 500px;
   font-size: 70px;
   line-height: 84.72px;
@@ -41,7 +40,6 @@
   height: 300px;
   top: 267px;
   left: 141px;
-  font-family: Inter;
   font-weight: 500px;
   font-size: 32px;
   line-height: 38.73px;
@@ -64,7 +62,6 @@
 height: 50px;
 top: 217px;
 left: 799px;
-font-family: Inter;
 font-weight: 500px;
 font-size: 40px;
 line-height: 60px;
