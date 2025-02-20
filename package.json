@@ -30,8 +30,6 @@
     "winston": "^3.11.0"
   },
   "devDependencies": {
-    "@types/react": "19.0.10",
-    "prisma": "^5.20.0",
-    "typescript": "5.7.3"
+    "prisma": "^5.20.0"
   }
 }
