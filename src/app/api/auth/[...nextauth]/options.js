@@ -37,7 +37,7 @@ export const options = {
 
             async authorize(credentials) {
               try {
-                const res = await axios.post("https://seu-backend.com/login", {
+                const res = await axios.post("http://localhost:8080/auth/register", {
                   email: credentials?.email,
                   password: credentials?.password,
                 });
