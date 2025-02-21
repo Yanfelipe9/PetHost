@@ -1,152 +1,89 @@
+/* Estilos gerais para o main */
 .main {
   display: flex;
-  height: 100vh;
+  flex-direction: column;
+  justify-content: space-around;
   align-items: center;
-  justify-content: center;
-  background-color: #f5f5f5;
-  flex-wrap: wrap;
+  height: 100vh;
+  width: 100%;
+  color: var(--font-cinza-escuro);
+
+}
+
+.logo {
+  width: 50px;
+  height: 60px;
 }
 
 .container_left {
-  width: 60%;
-  height: 100%;
-  background-color: #80aef7;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  padding-top: 5rem;
   align-items: center;
   text-align: center;
-  padding: 5px;
-  color: white;
+  width: 70%;
 }
 
-.container_left h1 {
+.container_left_title {
   display: flex;
-  align-items: center; /* Alinha verticalmente a logo e o texto */
-  gap: 20px; /* Espaço entre a imagem e o texto */
-  font-weight: 500px;
-  font-size: 70px;
-  line-height: 84.72px;
-  letter-spacing: 0%;
-  text-align: center;
-  margin-left: -150px;
-  width: 307px;
-  height: 181px;
-  color: rgba(10, 83, 185, 1);
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
 }
 
-.container_left h2 {
-  width: 459px;
-  height: 300px;
-  top: 267px;
-  left: 141px;
-  font-weight: 500px;
-  font-size: 32px;
-  line-height: 38.73px;
-  letter-spacing: 0%;
-  text-align: left;
+.container_left_title h1 {
+  font-weight: 500;
+  font-size: 2.5rem;
+  color: var(--cor-primaria);
+}
+
+.h2 {
+  margin-top: 1rem;
+  width: 70%;
 }
 
 .container {
-  width: 40%;
-  height: 100%;
-  background-color: white;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 100px;
-  position: relative;
-}
-
-.container h1 {
-  align-items: center;
-  font-weight: 500px;
-  font-size: 40px;
-  text-align: center;
-  color: black;
-}
-
-.container h2 {
-  align-items: center;
-  font-size: 1.5vw;
-  margin-bottom: 20px;
-  color: black;
-  text-align: center;
-}
-
-.container p {
-  margin-top: 10px;
-  font-size: 1vw;
-  text-align: center;
-}
-
-.container a {
-  color: #1e4db7;
-  text-decoration: none;
-  font-weight: bold;
-}
-
-.container a:hover {
-  text-decoration: underline;
-}
-
-.form {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 16px;
+  flex: 1;
 }
 
-.action {
-  padding: 25px;
-}
+@media (min-width: 992px) {
 
-/* Aproximando o footer do botão */
-.footer {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  font-size: 1vw;
-  margin-top: 10px; /* Reduzi o espaço para ficar mais próximo do botão */
-  width: 100%;
-  padding-bottom: 20px; /* Pequeno espaçamento para não colar no final da tela */
-}
-
-.form {
-    display: flex;
-    flex-direction: column;
+  /* Quando a tela for maior que 991px */
+  .main {
+    flex-direction: row;
     justify-content: center;
+  }
+
+  .container_left {
+    width: 50%;
+    /* Container esquerdo ocupa 50% */
+    background-color: var(--cor-secundaria);
+    /* Alterar fundo */
+    padding: 0;
+    color: white;
     align-items: center;
-    gap: 16px;
-}
+    /* Alinhar à esquerda */
+    text-align: left;
+    height: 100%;
+  }
 
-.form .action {
-    margin-top: 16px;
-    display: flex;
-    justify-content: center;
-}
-.buttonCustom {
-  width: 286px;
-  height: 54px;
-  border-radius: 8px;
-  padding-top: 9.5px;
-  padding-right: 24px;
-  padding-bottom: 9.5px;
-  padding-left: 24px;
-  background: #1677ff;
-  color: #fff;
-  border-color: #fff;
-  cursor: pointer;
-  font-weight: 500;
-  font-size: 24px;
-  line-height: 36px;
-  letter-spacing: 0%;
+  .container {
+    width: 50%;
+    /* Container direito ocupa 50% */
+    align-items: center;
+    /* Alinhar à esquerda */
+  }
 
 }
 
-.logo{
-  width: 70px;
-  height: 90px;
+@media (max-width: 991px) {
+  .h2 {
+    display: none;
+  }
 }
