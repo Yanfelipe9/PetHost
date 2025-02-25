@@ -36,50 +36,41 @@ export const options = {
             
 
             async authorize(credentials) {
-                try {
-                    const { email, password } = credentials;
-
-                    const foundUser = await db.user.findFirst({
-                        where: { email: email },
-                    });
-
-                    if (foundUser) {
-                        const passwordMatch = await bcrypt.compare(password, foundUser.password); // Corrección aquí
-
-                        if (passwordMatch) {
-                            console.log("dados corretos");
-                            delete foundUser.password; // Para no enviar la 
-                            delete foundUser.image
-                            return foundUser; //esse return found user, vai ser o valor que vai ser aarmazenado na session
-                        }
-                    }
-                } catch (error) {
-                    console.log("Erro ao fazer validação de credentials ->", error);
+              try {
+                const res = await axios.post("http://localhost:8080/auth/register", {
+                  email: credentials?.email,
+                  password: credentials?.password,
+                });
+      
+                const user = res.data;
+      
+                if (user && user.token) {
+                  return { id: user.id, email: user.email, token: user.token };
                 }
-
-                // Si no se puede validar las credenciales, devuelve null    
-                return null;
+              } catch (error) {
+                throw new Error("Credenciais inválidas");
+              }
+      
+              return null;
             },
         }),
     ],
 
     callbacks: {
 
-        async jwt({token,user}){
-            if(user){
-                token.avatar = user.avatar
-            }
-            return token;
-        },
+      async jwt({ token, user }) {
+        if (user) {
+          token.id = user.id;
+          token.token = user.token;
+        }
+        return token;
+      },
 
-        async session({ session, token }) {
-            if (session?.user) {
-                session.user.id = parseInt(token.sub);
-                session.user.avatar = token.avatar
-                // session.user.role = user.role; // Adiciona o role ao objeto de sessão
-            }
-            return session;
-        },
+      async session({ session, token }) {
+        session.user.id = token.id;
+        session.token = token.token;
+        return session;
+      },
     },
     pages : {
         signIn : "/signin"
