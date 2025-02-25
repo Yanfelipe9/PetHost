@@ -2,9 +2,10 @@
 
 import React, { useState } from 'react';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
-import { Button, Flex, Form, Input, Typography } from 'antd';
+import { Button, Flex, Form, Input, Typography, notification} from 'antd';
 import { signIn } from 'next-auth/react';
 import Link from 'next/link';
+import axios from "axios";
 
 const { Title } = Typography;
 
@@ -13,7 +14,29 @@ export default function FormCadastro() {
 
   const onFinish = async (values) => {
     setLoading(true);
-    // Aqui você pode fazer o registro do usuário, por exemplo, chamar uma API para criar a conta
+    try {
+      // Enviar os dados para o backend para realizar o cadastro
+      const response = await axios.post("http://localhost:8080/auth/register", { // Usando o endpoint de cadastro
+        email: values.email,
+        password: values.password,
+      });
+
+      console.log('Cadastro bem-sucedido:', response.data);
+      notification.success({
+        message: 'Cadastro bem-sucedido!',
+        description: 'Cadastro realizado com sucesso! Agora você pode fazer login.',
+      });
+
+      // Após o cadastro, você pode redirecionar para a página de login
+      window.location.href = '/signin';  // Redirecionar ou usar o Link do Next.js
+
+    } catch (error) {
+      console.error('Erro ao cadastrar:', error);
+      notification.error({
+        message: 'Erro ao cadastrar',
+        description: 'Houve um erro ao tentar realizar o cadastro. Tente novamente.',
+      });
+    }
     console.log('Cadastro', values);
     setLoading(false);
   };
