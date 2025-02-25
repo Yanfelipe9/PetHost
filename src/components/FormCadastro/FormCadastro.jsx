@@ -31,10 +31,10 @@ export default function FormCadastro() {
       window.location.href = '/signin';  // Redirecionar ou usar o Link do Next.js
 
     } catch (error) {
-      console.error('Erro ao cadastrar:', error);
+      console.log(error.response?.data);
       notification.error({
-        message: 'Erro ao cadastrar',
-        description: 'Houve um erro ao tentar realizar o cadastro. Tente novamente.',
+        message: 'Erro ao cadastrar!',
+        description: error.response?.data?.message,
       });
     }
     console.log('Cadastro', values);

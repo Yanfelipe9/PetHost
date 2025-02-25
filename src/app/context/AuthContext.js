@@ -1,3 +1,4 @@
+'use client'
 import { createContext, useContext, useState } from "react";
 
 const AuthContext = createContext();
@@ -6,6 +7,7 @@ export const AuthContextProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
   const login = (userData) => {
+    
     setUser(userData);
   };
 
