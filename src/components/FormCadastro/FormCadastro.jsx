@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
-import { Button, Flex, Form, Input, Typography } from 'antd';
+import { Button, Flex, Form, Input, Typography, notification} from 'antd';
 import { signIn } from 'next-auth/react';
 import Link from 'next/link';
 import axios from "axios";
@@ -22,14 +22,20 @@ export default function FormCadastro() {
       });
 
       console.log('Cadastro bem-sucedido:', response.data);
-      alert('Cadastro realizado com sucesso! Agora você pode fazer login.');
+      notification.success({
+        message: 'Cadastro bem-sucedido!',
+        description: 'Cadastro realizado com sucesso! Agora você pode fazer login.',
+      });
 
       // Após o cadastro, você pode redirecionar para a página de login
       window.location.href = '/signin';  // Redirecionar ou usar o Link do Next.js
 
     } catch (error) {
       console.error('Erro ao cadastrar:', error);
-      alert('Erro ao cadastrar. Tente novamente.');
+      notification.error({
+        message: 'Erro ao cadastrar',
+        description: 'Houve um erro ao tentar realizar o cadastro. Tente novamente.',
+      });
     }
     console.log('Cadastro', values);
     setLoading(false);
