@@ -107,4 +107,3 @@ Este projeto foi desenvolvido utilizando **Next.js 14**, **Prisma ORM**, **NextA
 
 Se tiver dúvidas ou precisar de suporte, entre em contato! 🚀
 
-.
