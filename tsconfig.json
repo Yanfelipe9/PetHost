@@ -1,6 +1,10 @@
 {
   "compilerOptions": {
     "allowJs": true,
+    "baseUrl": "./",
+    "paths": {
+      "@/*": ["src/*"]
+    },
     "noEmit": true,
     "target": "esnext",
     "module": "esnext",
