@@ -4,6 +4,7 @@ import {
   UserOutlined,
   LaptopOutlined,
   NotificationOutlined,
+  BugOutlined
 } from "@ant-design/icons";
 import { usePathname, useRouter } from "next/navigation";
 import Logo from "@/assets/imgs/logo.png";
@@ -37,6 +38,9 @@ export default function HomeLayout({ children }) {
           </Menu.Item>
           <Menu.Item key="/clientes" icon={<LaptopOutlined />}>
             Clientes
+          </Menu.Item>
+          <Menu.Item key="/pets" icon={<BugOutlined />}>
+            Pets
           </Menu.Item>
           <Menu.Item key="3" icon={<NotificationOutlined />}>
             Serviços

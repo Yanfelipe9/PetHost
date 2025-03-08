@@ -22,7 +22,7 @@ export default function FormLogin() {
     api
       .post("/auth/login", values)
       .then((response) => {
-        localStorage.setItem("token", response.data.token);
+        login(response.data); // Salvando o usuário no contexto
         console.log("Login efetuado com sucesso:", response.data);
         router.push("/painel");
       })
