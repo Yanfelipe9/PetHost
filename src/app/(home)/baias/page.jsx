@@ -29,6 +29,7 @@ const Baias = () =>{
 
     return(
         <div style={{ padding: 20 }}>
+        <Flex justify="space-between" align="flex-start" className={styles.header}>
         <Space style={{ marginBottom: 16 }}>
           <Input
             placeholder="Pesquisar por Nome do Pet"
@@ -37,10 +38,9 @@ const Baias = () =>{
             prefix={<SearchOutlined />}
           />
           <Button icon={<FilterOutlined />} iconPosition={position}>
-            Search
+            Filtrar
           </Button>
         </Space>
-        <Flex justify="space-between" align="flex-end" className={styles.header}>
           <div></div>
           <Button type="primary" onClick={showModal} className={styles.createButton}>
             Criar
@@ -53,20 +53,8 @@ const Baias = () =>{
               onCancel={handleCancel}
             >
               <Form form={form} layout="vertical">
-                <Form.Item name="name" label="Nome do Pet" rules={[{ required: true }]}>
+                <Form.Item name="name" label="Nome da Baia:" rules={[{ required: true }]}>
                   <Input />
-                </Form.Item>
-                <Form.Item name="breed" label="Raça do Pet" rules={[{ required: true }]}>
-                  <Input />
-                </Form.Item>
-                <Form.Item name="owner" label="Nome do Dono" rules={[{ required: true }]}>
-                  <Input />
-                </Form.Item>
-                <Form.Item name="phone" label="Número do Dono" rules={[{ required: true }]}>
-                  <Input />
-                </Form.Item>
-                <Form.Item name="observations" label="Observações">
-                  <Input.TextArea />
                 </Form.Item>
               </Form>
             </Modal>
