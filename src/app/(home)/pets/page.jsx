@@ -1,8 +1,44 @@
 'use client'
 import React, { useState } from "react";
-import { Table, Input, Button, Space, Flex, Modal, Form, RadioChangeEvent,Radio  } from "antd";
-import { SearchOutlined, FilterOutlined } from "@ant-design/icons";
+import { Table, Input, Button, Space, Flex, Modal, Form, RadioChangeEvent,Radio, Avatar, Layout} from "antd";
+//Fazer o formulario
+const { Header, Footer, Sider, Content } = Layout;
+import { SearchOutlined, FilterOutlined, UserOutlined } from "@ant-design/icons";
 import styles from './pets.module.css'
+
+//Layout Formulario
+const headerStyle = {
+  textAlign: 'center',
+  color: '#fff',
+  height: 64,
+  paddingInline: 48,
+  lineHeight: '64px',
+  backgroundColor: '#4096ff',
+};
+const contentStyle = {
+  textAlign: 'center',
+  minHeight: 120,
+  lineHeight: '120px',
+  color: '#fff',
+  backgroundColor: '#0958d9',
+};
+const siderStyle = {
+  textAlign: 'center',
+  lineHeight: '120px',
+  color: '#fff',
+  backgroundColor: '#1677ff',
+};
+const footerStyle = {
+  textAlign: 'center',
+  color: '#fff',
+  backgroundColor: '#4096ff',
+};
+const layoutStyle = {
+  borderRadius: 8,
+  overflow: 'hidden',
+  width: 'calc(100% - 8px)',
+  maxWidth: 'calc(100% - 8px)',
+};
 
 const mockData= [
   { key: "1", id: "5644", name: "Totó", breed: "Golden", owner: "João", phone: "(85)999999999", observations: "Problemas de pelagem" },
@@ -31,7 +67,7 @@ const PetTable = () => {
 
   const handleOk = () => {
     form.validateFields().then((values) => {
-      console.log('Cliente cadastrado:', values);
+      console.log('Pet cadastrado:', values);
       setIsModalOpen(false);
       form.resetFields();
     });
@@ -58,22 +94,22 @@ const PetTable = () => {
 
   return (
     <div style={{ padding: 20 }}>
-      <Space style={{ marginBottom: 16 }}>
-        <Input
-          placeholder="Pesquisar por Nome do Pet"
-          onChange={(e) => setSearchText(e.target.value)}
-          style={{ width: 300 }}
-          prefix={<SearchOutlined />}
-        />
-        <Button icon={<FilterOutlined />} iconPosition={position}>
-            Search
-        </Button>
-      </Space>
-      <Flex justify="space-between" align="flex-end" className={styles.header}>
-        <div></div>
-        <Button type="primary" onClick={showModal} className={styles.createButton}>
-          Criar
-        </Button>
+      <Flex justify="space-between" align="flex-start" className={styles.header}>
+        <Space style={{ marginBottom: 16 }}>
+          <Input
+            placeholder="Pesquisar por Nome do Pet"
+            onChange={(e) => setSearchText(e.target.value)}
+            style={{ width: 300 }}
+            prefix={<SearchOutlined />}
+          />
+          <Button icon={<FilterOutlined />} iconPosition={position}>
+              Filtrar
+          </Button>
+        </Space>
+          <div></div>
+          <Button type="primary" onClick={showModal} className={styles.createButton}>
+            Criar
+          </Button>
       </Flex>
       <Table
         columns={columns}
@@ -85,8 +121,71 @@ const PetTable = () => {
       open={isModalOpen}
       onOk={handleOk}
       onCancel={handleCancel}
+      width={1000}
     >
+      {/* teste */}
+      <Layout style={layoutStyle}>
+      <Header style={headerStyle}>Cadastrar Pet</Header>
+      <Layout>
+        <Sider width="25%" style={siderStyle}>
+          <Avatar size={120} icon={<UserOutlined />} />
+        </Sider>
+        <Content style={contentStyle}>
+          <Form form={form} layout="vertical">
+            <Form.Item name="name" label="Nome do Pet" rules={[{ required: true }]}>
+              <Input />
+            </Form.Item>
+            <Form.Item name="Data_Nascimento" label="Data de Nascimento do Pet" rules={[{ required: true }]}>
+              <Input />
+            </Form.Item>
+            <Form.Item name="Sexo" label="Sexo" rules={[{ required: true }]}>
+              <Radio.Group
+                onChange={onChange}
+                value={value}
+                options={[
+                  {
+                    value: 1,
+                    label: (
+                      <Flex gap="small" justify="center" align="center" vertical>
+                        Macho
+                      </Flex>
+                    ),
+                  },
+                  {
+                    value: 2,
+                    label: (
+                      <Flex gap="small" justify="center" align="center" vertical>
+                        Femea
+                      </Flex>
+                    ),
+                  },
+                ]}
+              />
+            </Form.Item>
+          </Form>
+        </Content>
+      </Layout>
+      {/* teste */}
+      <Footer style={footerStyle}>
+        <Form.Item name="Raça" label="Raça/Caracteristicas do Pet" rules={[{ required: true }]}>
+          <Input />
+        </Form.Item>
+        <Form.Item name="Cuidados" label="Doenças/Cuidados do Pet" rules={[{ required: true }]}>
+          <Input />
+        </Form.Item>
+        <Form.Item name="Nome_Dono" label="Nome do Dono" rules={[{ required: true }]}>
+          <Input />
+        </Form.Item>
+        <Form.Item name="Telefone" label="Número do Dono" rules={[{ required: true }]}>
+          <Input />
+        </Form.Item>
+        <Form.Item name="Observações" label="Observações">
+          <Input.TextArea />
+        </Form.Item>
+      </Footer>
+    </Layout>
       <Form form={form} layout="vertical">
+        <Avatar size={64} icon={<UserOutlined />} />
         <Form.Item name="name" label="Nome do Pet" rules={[{ required: true }]}>
           <Input />
         </Form.Item>
@@ -95,27 +194,27 @@ const PetTable = () => {
         </Form.Item>
         <Form.Item name="Sexo" label="Sexo" rules={[{ required: true }]}>
         <Radio.Group
-      onChange={onChange}
-      value={value}
-      options={[
-        {
-          value: 1,
-          label: (
-            <Flex gap="small" justify="center" align="center" vertical>
-              Macho
-            </Flex>
-          ),
-        },
-        {
-          value: 2,
-          label: (
-            <Flex gap="small" justify="center" align="center" vertical>
-              Femea
-            </Flex>
-          ),
-        },
-      ]}
-    />
+          onChange={onChange}
+          value={value}
+          options={[
+            {
+              value: 1,
+              label: (
+                <Flex gap="small" justify="center" align="center" vertical>
+                  Macho
+                </Flex>
+              ),
+            },
+            {
+              value: 2,
+              label: (
+                <Flex gap="small" justify="center" align="center" vertical>
+                  Femea
+                </Flex>
+              ),
+            },
+          ]}
+        />
         </Form.Item>
         <Form.Item name="Raça" label="Raça/Caracteristicas do Pet" rules={[{ required: true }]}>
           <Input />

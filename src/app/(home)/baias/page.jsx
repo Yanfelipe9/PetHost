@@ -29,6 +29,7 @@ const Baias = () =>{
 
     return(
         <div style={{ padding: 20 }}>
+        <Flex justify="space-between" align="flex-start" className={styles.header}>
         <Space style={{ marginBottom: 16 }}>
           <Input
             placeholder="Pesquisar por Nome do Pet"
@@ -37,10 +38,9 @@ const Baias = () =>{
             prefix={<SearchOutlined />}
           />
           <Button icon={<FilterOutlined />} iconPosition={position}>
-            Search
+            Filtrar
           </Button>
         </Space>
-        <Flex justify="space-between" align="flex-end" className={styles.header}>
           <div></div>
           <Button type="primary" onClick={showModal} className={styles.createButton}>
             Criar
