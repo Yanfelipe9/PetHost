@@ -53,20 +53,8 @@ const Baias = () =>{
               onCancel={handleCancel}
             >
               <Form form={form} layout="vertical">
-                <Form.Item name="name" label="Nome do Pet" rules={[{ required: true }]}>
+                <Form.Item name="name" label="Nome da Baia:" rules={[{ required: true }]}>
                   <Input />
-                </Form.Item>
-                <Form.Item name="breed" label="Raça do Pet" rules={[{ required: true }]}>
-                  <Input />
-                </Form.Item>
-                <Form.Item name="owner" label="Nome do Dono" rules={[{ required: true }]}>
-                  <Input />
-                </Form.Item>
-                <Form.Item name="phone" label="Número do Dono" rules={[{ required: true }]}>
-                  <Input />
-                </Form.Item>
-                <Form.Item name="observations" label="Observações">
-                  <Input.TextArea />
                 </Form.Item>
               </Form>
             </Modal>

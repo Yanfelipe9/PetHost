@@ -1,6 +1,6 @@
 'use client'
 import React, { useState } from "react";
-import { Table, Input, Button, Space, Flex, Modal, Form} from "antd";
+import { Table, Input, Button, Space, Flex, Modal, Form, RadioChangeEvent,Radio  } from "antd";
 import { SearchOutlined, FilterOutlined } from "@ant-design/icons";
 import styles from './pets.module.css'
 
@@ -20,7 +20,11 @@ const PetTable = () => {
   const [position, setPosition] = useState('start');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [form] = Form.useForm();
+  const [value, setValue] = useState(1);
 
+  const onChange = (e) => {
+    setValue(e.target.value);
+  };
   const showModal = () => {
     setIsModalOpen(true);
   };
@@ -86,16 +90,46 @@ const PetTable = () => {
         <Form.Item name="name" label="Nome do Pet" rules={[{ required: true }]}>
           <Input />
         </Form.Item>
-        <Form.Item name="breed" label="Raça do Pet" rules={[{ required: true }]}>
+        <Form.Item name="Data_Nascimento" label="Data de Nascimento do Pet" rules={[{ required: true }]}>
           <Input />
         </Form.Item>
-        <Form.Item name="owner" label="Nome do Dono" rules={[{ required: true }]}>
+        <Form.Item name="Sexo" label="Sexo" rules={[{ required: true }]}>
+        <Radio.Group
+      onChange={onChange}
+      value={value}
+      options={[
+        {
+          value: 1,
+          label: (
+            <Flex gap="small" justify="center" align="center" vertical>
+              Macho
+            </Flex>
+          ),
+        },
+        {
+          value: 2,
+          label: (
+            <Flex gap="small" justify="center" align="center" vertical>
+              Femea
+            </Flex>
+          ),
+        },
+      ]}
+    />
+        </Form.Item>
+        <Form.Item name="Raça" label="Raça/Caracteristicas do Pet" rules={[{ required: true }]}>
           <Input />
         </Form.Item>
-        <Form.Item name="phone" label="Número do Dono" rules={[{ required: true }]}>
+        <Form.Item name="Cuidados" label="Doenças/Cuidados do Pet" rules={[{ required: true }]}>
           <Input />
         </Form.Item>
-        <Form.Item name="observations" label="Observações">
+        <Form.Item name="Nome_Dono" label="Nome do Dono" rules={[{ required: true }]}>
+          <Input />
+        </Form.Item>
+        <Form.Item name="Telefone" label="Número do Dono" rules={[{ required: true }]}>
+          <Input />
+        </Form.Item>
+        <Form.Item name="Observações" label="Observações">
           <Input.TextArea />
         </Form.Item>
       </Form>
