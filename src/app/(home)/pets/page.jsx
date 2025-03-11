@@ -5,33 +5,31 @@ import { Table, Input, Button, Space, Flex, Modal, Form, RadioChangeEvent,Radio,
 const { Header, Footer, Sider, Content } = Layout;
 import { SearchOutlined, FilterOutlined, UserOutlined } from "@ant-design/icons";
 import styles from './pets.module.css'
+import Image from 'next/image';
+import imgPet from './pngtree-dog-logo-design-vector-icon-png-image_1824202 5.png'
 
 //Layout Formulario
 const headerStyle = {
   textAlign: 'center',
-  color: '#fff',
   height: 64,
   paddingInline: 48,
   lineHeight: '64px',
-  backgroundColor: '#4096ff',
+  backgroundColor: '#ffffff',
 };
 const contentStyle = {
   textAlign: 'center',
   minHeight: 120,
   lineHeight: '120px',
-  color: '#fff',
-  backgroundColor: '#0958d9',
+  backgroundColor: '#ffffff',
 };
 const siderStyle = {
   textAlign: 'center',
   lineHeight: '120px',
-  color: '#fff',
-  backgroundColor: '#1677ff',
+  backgroundColor: '#ffffff',
 };
 const footerStyle = {
   textAlign: 'center',
-  color: '#fff',
-  backgroundColor: '#4096ff',
+  backgroundColor: '#ffffff',
 };
 const layoutStyle = {
   borderRadius: 8,
@@ -117,7 +115,6 @@ const PetTable = () => {
         pagination={{ pageSize: 5 }}
       />
     <Modal
-      title="Cadastrar Pet"
       open={isModalOpen}
       onOk={handleOk}
       onCancel={handleCancel}
@@ -128,17 +125,19 @@ const PetTable = () => {
       <Header style={headerStyle}>Cadastrar Pet</Header>
       <Layout>
         <Sider width="25%" style={siderStyle}>
-          <Avatar size={120} icon={<UserOutlined />} />
+          <Image src={imgPet} size={120} />
         </Sider>
         <Content style={contentStyle}>
           <Form form={form} layout="vertical">
-            <Form.Item name="name" label="Nome do Pet" rules={[{ required: true }]}>
-              <Input />
-            </Form.Item>
-            <Form.Item name="Data_Nascimento" label="Data de Nascimento do Pet" rules={[{ required: true }]}>
-              <Input />
-            </Form.Item>
-            <Form.Item name="Sexo" label="Sexo" rules={[{ required: true }]}>
+            <Space>
+              <Form.Item name="name" label="Nome do Pet" rules={[{ required: true }]}>
+                <Input style={{width: '100%'}} />
+              </Form.Item>
+              <Form.Item name="Data_Nascimento" label="Data de Nascimento do Pet" rules={[{ required: true }]}>
+                <Input style={{width: '100%'}} />
+              </Form.Item>
+            </Space>
+            <Form.Item name="Sexo" label="Sexo" rules={[{ required: true }]}style={{width: "30%"}}>
               <Radio.Group
                 onChange={onChange}
                 value={value}
@@ -167,24 +166,28 @@ const PetTable = () => {
       </Layout>
       {/* teste */}
       <Footer style={footerStyle}>
-        <Form.Item name="Raça" label="Raça/Caracteristicas do Pet" rules={[{ required: true }]}>
-          <Input />
-        </Form.Item>
-        <Form.Item name="Cuidados" label="Doenças/Cuidados do Pet" rules={[{ required: true }]}>
-          <Input />
-        </Form.Item>
-        <Form.Item name="Nome_Dono" label="Nome do Dono" rules={[{ required: true }]}>
-          <Input />
-        </Form.Item>
-        <Form.Item name="Telefone" label="Número do Dono" rules={[{ required: true }]}>
-          <Input />
-        </Form.Item>
+        <Space>
+          <Form.Item name="Raça" label="Raça/Caracteristicas do Pet" rules={[{ required: true }]}>
+            <Input  style={{width: '100%'}}/>
+          </Form.Item>
+          <Form.Item name="Cuidados" label="Doenças/Cuidados do Pet" rules={[{ required: true }]}>
+            <Input />
+          </Form.Item>
+          </Space>
+        <Space>
+          <Form.Item name="Nome_Dono" label="Nome do Dono" rules={[{ required: true }]}>
+            <Input />
+          </Form.Item>
+          <Form.Item name="Telefone" label="Número do Dono" rules={[{ required: true }]}>
+            <Input />
+          </Form.Item>
+        </Space>
         <Form.Item name="Observações" label="Observações">
           <Input.TextArea />
         </Form.Item>
       </Footer>
     </Layout>
-      <Form form={form} layout="vertical">
+      {/* <Form form={form} layout="vertical">
         <Avatar size={64} icon={<UserOutlined />} />
         <Form.Item name="name" label="Nome do Pet" rules={[{ required: true }]}>
           <Input />
@@ -231,7 +234,7 @@ const PetTable = () => {
         <Form.Item name="Observações" label="Observações">
           <Input.TextArea />
         </Form.Item>
-      </Form>
+      </Form> */}
     </Modal>
 
     </div>
