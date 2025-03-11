@@ -14,18 +14,15 @@ const api = axios.create({
 // Interceptador para incluir Token JWT (se necessário)
 api.interceptors.request.use(
   async (config) => {
-    // Exemplo: Pegando token do NextAuth (se autenticado)
     const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
-    
+
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
 
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
 // Interceptador para tratar erros globais
@@ -33,7 +30,13 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response) {
-      console.error("Erro na API:", error.response.data);
+      if (error.response.status === 401) {
+        console.warn("Usuário não autenticado. Redirecionando para login...");
+        localStorage.removeItem('token');
+        window.location.href = "/login"; // Redireciona para página de login se não autenticado
+      } else {
+        console.error("Erro na API:", error.response.data);
+      }
     } else {
       console.error("Erro de conexão:", error.message);
     }

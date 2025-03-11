@@ -1,82 +1,47 @@
 "use client";
 
-import { useState } from 'react';
-import { Table, Space, Button, Modal, Form, Input, Flex, Pagination } from 'antd';
-import styles from './clientes.module.css';
+import api from "@/utils/axios";
+import { Button, Flex, Form, Input, Modal, Pagination, Table } from "antd";
+import { useEffect, useState } from "react";
+import styles from "./clientes.module.css";
 
 const columns = [
-  {
-    title: 'Nome',
-    dataIndex: 'name',
-    key: 'name',
-  },
-  {
-    title: 'CPF',
-    dataIndex: 'cpf',
-    key: 'cpf',
-  },
-  {
-    title: 'Idade',
-    dataIndex: 'age',
-    key: 'age',
-  },
-  {
-    title: 'Endereço',
-    dataIndex: 'address',
-    key: 'address',
-  },
-  {
-    title: 'Quantidade de Pets',
-    dataIndex: 'pets',
-    key: 'pets',
-  },
-];
-
-const data = [
-  {
-    key: '1',
-    name: 'John Brown',
-    cpf: '123.456.789-00',
-    age: 32,
-    address: 'New York No. 1 Lake Park',
-    pets: 2,
-  },
-  {
-    key: '2',
-    name: 'Jim Green',
-    cpf: '987.654.321-00',
-    age: 42,
-    address: 'London No. 1 Lake Park',
-    pets: 1,
-  },
-  {
-    key: '3',
-    name: 'Joe Black',
-    cpf: '111.222.333-44',
-    age: 32,
-    address: 'Sydney No. 1 Lake Park',
-    pets: 3,
-  },
+  { title: "Nome", dataIndex: "nome", key: "nome" },
+  { title: "Telefone", dataIndex: "telefone", key: "telefone" },
+  { title: "Quantidade de Pets", dataIndex: "pets", key: "pets" },
 ];
 
 const Clientes = () => {
+  const [clientes, setClientes] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [form] = Form.useForm();
 
-  const showModal = () => {
-    setIsModalOpen(true);
-  };
+  useEffect(() => {
+    const fetchClientes = async () => {
+      try {
+        const response = await api.get("/clientes");
+        setClientes(response.data);
+      } catch (error) {
+        console.error("Erro ao buscar clientes:", error);
+      }
+    };
 
-  const handleOk = () => {
-    form.validateFields().then((values) => {
-      console.log('Cliente cadastrado:', values);
+    fetchClientes();
+  }, []);
+
+  const showModal = () => setIsModalOpen(true);
+  const handleCancel = () => setIsModalOpen(false);
+
+  const handleOk = async () => {
+    try {
+      const values = await form.validateFields();
+      await api.post("/clientes", values);
       setIsModalOpen(false);
       form.resetFields();
-    });
-  };
-
-  const handleCancel = () => {
-    setIsModalOpen(false);
+      setClientes((prev) => [...prev, values]);
+    } catch (error) {
+      console.error("Erro ao cadastrar cliente:", error);
+    }
   };
 
   return (
@@ -88,27 +53,18 @@ const Clientes = () => {
         </Button>
       </Flex>
       <div className={styles.tableContainer}>
-        <Table columns={columns} dataSource={data} pagination={false} />
+        <Table columns={columns} dataSource={clientes} pagination={false} rowKey="id" />
       </div>
       <Flex justify="center" className={styles.paginationContainer}>
-        <Pagination defaultCurrent={1} total={50} />
+        <Pagination defaultCurrent={1} total={clientes.length} />
       </Flex>
       <Modal title="Cadastrar Cliente" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
         <Form form={form} layout="vertical">
-          <Form.Item name="name" label="Nome" rules={[{ required: true, message: 'Digite o nome' }]}> 
+          <Form.Item name="nome" label="Nome" rules={[{ required: true, message: "Digite o nome" }]}> 
             <Input />
           </Form.Item>
-          <Form.Item name="cpf" label="CPF" rules={[{ required: true, message: 'Digite o CPF' }]}> 
+          <Form.Item name="telefone" label="Telefone" rules={[{ required: true, message: "Digite o telefone" }]}> 
             <Input />
-          </Form.Item>
-          <Form.Item name="address" label="Endereço"> 
-            <Input />
-          </Form.Item>
-          <Form.Item name="age" label="Idade" rules={[{ required: true, message: 'Digite a idade' }]}> 
-            <Input type="number" />
-          </Form.Item>
-          <Form.Item name="pets" label="Quantidade de Pets"> 
-            <Input type="number" />
           </Form.Item>
         </Form>
       </Modal>
@@ -117,3 +73,5 @@ const Clientes = () => {
 };
 
 export default Clientes;
+
+//TO DO-- LINKAR COM O JWT DO LOGIN
