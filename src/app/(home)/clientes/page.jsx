@@ -1,5 +1,6 @@
 "use client";
 
+import { useAuth } from "@/app/context/AuthContext";
 import api from "@/utils/axios";
 import { Button, Flex, Form, Input, Modal, Pagination, Table } from "antd";
 import { useEffect, useState } from "react";
@@ -8,10 +9,10 @@ import styles from "./clientes.module.css";
 const columns = [
   { title: "Nome", dataIndex: "nome", key: "nome" },
   { title: "Telefone", dataIndex: "telefone", key: "telefone" },
-  { title: "Quantidade de Pets", dataIndex: "pets", key: "pets" },
 ];
 
 const Clientes = () => {
+  const {user} = useAuth();
   const [clientes, setClientes] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [form] = Form.useForm();
@@ -35,7 +36,14 @@ const Clientes = () => {
   const handleOk = async () => {
     try {
       const values = await form.validateFields();
-      await api.post("/clientes", values);
+      
+      const body = {
+        nome: values.nome,
+        telefone: values.telefone,
+        userId : user.userId
+      };
+
+      await api.post("/clientes", body);
       setIsModalOpen(false);
       form.resetFields();
       setClientes((prev) => [...prev, values]);
@@ -43,7 +51,6 @@ const Clientes = () => {
       console.error("Erro ao cadastrar cliente:", error);
     }
   };
-
   return (
     <div className={styles.container}>
       <Flex justify="space-between" align="center" className={styles.header}>
@@ -73,5 +80,3 @@ const Clientes = () => {
 };
 
 export default Clientes;
-
-//TO DO-- LINKAR COM O JWT DO LOGIN
