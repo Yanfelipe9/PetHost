@@ -32,7 +32,7 @@ const Baias = () =>{
         <Flex justify="space-between" align="flex-start" className={styles.header}>
         <Space style={{ marginBottom: 16 }}>
           <Input
-            placeholder="Pesquisar por Nome do Pet"
+            placeholder="Pesquisar por Baia"
             onChange={(e) => setSearchText(e.target.value)}
             style={{ width: 300 }}
             prefix={<SearchOutlined />}
@@ -47,7 +47,7 @@ const Baias = () =>{
           </Button>
         </Flex>
         <Modal
-              title="Cadastrar Pet"
+              title="Cadastrar Baia"
               open={isModalOpen}
               onOk={handleOk}
               onCancel={handleCancel}
