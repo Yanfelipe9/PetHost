@@ -1,6 +1,6 @@
 'use client'
-import api from "@/utils/axios";
-import { createContext, ReactNode, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useState, ReactNode } from "react";
+
 
 interface User {
   userId: string;
@@ -9,46 +9,28 @@ interface User {
 
 interface AuthContextType {
   user: User | null;
-  login: (email: string, password: string) => Promise<boolean>;
+  login: (userData: User & { token: string }) => void;
   logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
 export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
 
-  useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    const storedToken = localStorage.getItem("token");
-
-    if (storedUser && storedToken) {
-      setUser(JSON.parse(storedUser));
-    }
-  }, []);
-
-  const login = async (email: string, password: string) => {
-    try {
-      const response = await api.post("/auth/login", { email, password });
-      const { token, userId } = response.data;
-
-      const userData = { userId, email };
-      localStorage.setItem("user", JSON.stringify(userData));
-      localStorage.setItem("token", token);
-
-      setUser(userData);
-      return true;
-    } catch (error) {
-      console.error("Erro ao fazer login:", error);
-      return false;
-    }
+  const login = (userData: User & { token: string }) => {
+    const { userId, email, token } = userData;
+    
+    const user = { userId, email };
+    localStorage.setItem("user", JSON.stringify(user));
+    localStorage.setItem("token", token);
+    console.log("user", user);
+    setUser(user);
   };
 
   const logout = () => {
     setUser(null);
     localStorage.removeItem("user");
     localStorage.removeItem("token");
-    window.location.href = "/login"; // Redireciona para a página de login
   };
 
   return (
@@ -61,7 +43,7 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error("useAuth deve ser usado dentro de um AuthContextProvider");
+    throw new Error("useAuth must be used within an AuthContextProvider");
   }
   return context;
 };

@@ -25,23 +25,5 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Interceptador para tratar erros globais
-api.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response) {
-      if (error.response.status === 401) {
-        console.warn("Usuário não autenticado. Redirecionando para login...");
-        localStorage.removeItem('token');
-        window.location.href = "/login"; // Redireciona para página de login se não autenticado
-      } else {
-        console.error("Erro na API:", error.response.data);
-      }
-    } else {
-      console.error("Erro de conexão:", error.message);
-    }
-    return Promise.reject(error);
-  }
-);
 
 export default api;
