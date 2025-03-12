@@ -44,7 +44,7 @@ export default function HomeLayout({ children }) {
             Pets
           </Menu.Item>
           <Menu.Item key="/baias" icon={<AppstoreOutlined />}>
-            baias
+            Baias
           </Menu.Item>
           <Menu.Item key="3" icon={<NotificationOutlined />}>
             Serviços
