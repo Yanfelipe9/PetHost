@@ -23,7 +23,7 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
     const user = { userId, email };
     localStorage.setItem("user", JSON.stringify(user));
     localStorage.setItem("token", token);
-
+    console.log("user", user);
     setUser(user);
   };
 
