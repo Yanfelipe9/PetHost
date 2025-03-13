@@ -120,7 +120,6 @@ const PetTable = () => {
       onCancel={handleCancel}
       width={1000}
     >
-      {/* teste */}
       <Layout style={layoutStyle}>
       <Header style={headerStyle}>Cadastrar Pet</Header>
       <Layout>
@@ -129,13 +128,14 @@ const PetTable = () => {
         </Sider>
         <Content style={contentStyle}>
           <Form form={form} layout="vertical">
-            <Space>
-              <Form.Item name="name" label="Nome do Pet" rules={[{ required: true }]}>
-                <Input style={{width: '100%'}} />
+            <Space size={159}>
+              <Form.Item style={{width: '120%'}} name="name" label="Nome do Pet" rules={[{ required: true }]}>
+                <Input style={{width: '120%'}} />
               </Form.Item>
-              <Form.Item name="Data_Nascimento" label="Data de Nascimento do Pet" rules={[{ required: true }]}>
-                <Input style={{width: '100%'}} />
+              <Form.Item style={{width: '120%'}} name="Data_Nascimento" label="Data de Nascimento do Pet" rules={[{ required: true }]}>
+                <Input style={{width: '120%'}} />
               </Form.Item>
+              <div></div>
             </Space>
             <Form.Item name="Sexo" label="Sexo" rules={[{ required: true }]}style={{width: "30%"}}>
               <Radio.Group
@@ -164,25 +164,26 @@ const PetTable = () => {
           </Form>
         </Content>
       </Layout>
-      {/* teste */}
       <Footer style={footerStyle}>
-        <Space>
+        <Space size={200}>
           <Form.Item name="Raça" label="Raça/Caracteristicas do Pet" rules={[{ required: true }]}>
-            <Input  style={{width: '100%'}}/>
+            <Input style={{width: '160%'}}/>
           </Form.Item>
           <Form.Item name="Cuidados" label="Doenças/Cuidados do Pet" rules={[{ required: true }]}>
-            <Input />
+            <Input style={{width: '160%'}}/>
           </Form.Item>
+          <div></div>
           </Space>
-        <Space>
+        <Space size={200}>
           <Form.Item name="Nome_Dono" label="Nome do Dono" rules={[{ required: true }]}>
-            <Input />
+            <Input style={{width: '160%'}}/>
           </Form.Item>
           <Form.Item name="Telefone" label="Número do Dono" rules={[{ required: true }]}>
-            <Input />
+            <Input style={{width: '160%'}}/>
           </Form.Item>
+          <div></div>
         </Space>
-        <Form.Item name="Observações" label="Observações">
+        <Form.Item style={{width: '100%'}} name="Observações" label="Observações">
           <Input.TextArea />
         </Form.Item>
       </Footer>
