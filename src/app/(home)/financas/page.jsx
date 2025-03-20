@@ -91,9 +91,6 @@ const FinanceiroPage = () => {
               />
               <Button icon={<FilterOutlined />}>Filtrar</Button>
             </Space>
-            <Button type="primary" onClick={() => showModal(null)} className={styles.createButton}>
-              Criar
-            </Button>
           </Flex>
           
           <Table
