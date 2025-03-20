@@ -64,7 +64,7 @@ const Baias = () => {
   };
 
   return (
-    <div className={styles.container}>
+    <div style={{ padding: 20 }} className={styles.container}>
       <Flex justify="space-between" align="center" className={styles.header}>
         <Space style={{ marginBottom: 16 }}>
           <Input
