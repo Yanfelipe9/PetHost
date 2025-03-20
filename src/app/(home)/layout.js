@@ -6,6 +6,7 @@ import {
   NotificationOutlined,
   BugOutlined,
   AppstoreOutlined,
+  DollarOutlined
 } from "@ant-design/icons";
 import { usePathname, useRouter } from "next/navigation";
 import Logo from "@/assets/imgs/logo.png";
@@ -46,8 +47,8 @@ export default function HomeLayout({ children }) {
           <Menu.Item key="/baias" icon={<AppstoreOutlined />}>
             Baias
           </Menu.Item>
-          <Menu.Item key="3" icon={<NotificationOutlined />}>
-            Serviços
+          <Menu.Item key="/financas" icon={<DollarOutlined />}>
+            Financeiro
           </Menu.Item>
           <Menu.Item key="4" icon={<NotificationOutlined />}>
             Contato
