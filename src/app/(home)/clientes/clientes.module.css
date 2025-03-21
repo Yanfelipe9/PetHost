@@ -31,11 +31,33 @@
   
   .tableContainer {
     width: 100%;
+    margin-top: 1rem;
   }
   
   .paginationContainer {
     display: flex;
     justify-content: center;
     margin-top: 20px;
+  }
+  
+
+  .customAntInput {
+    width: 100%;
+    padding: 4px 11px;
+    font-size: 14px;
+    line-height: 1.5715;
+    color: rgba(0, 0, 0, 0.85);
+    background-color: #fff;
+    background-image: none;
+    border: 1px solid #d9d9d9;
+    border-radius: 6px;
+    transition: all 0.2s;
+  }
+  
+  .customAntInput:focus,
+  .customAntInput:hover {
+    border-color: #4096ff;
+    outline: 0;
+    box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
   }
   

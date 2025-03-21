@@ -19,6 +19,7 @@ export default function FormLogin() {
 
   const onFinish = async (values) => {
     setLoading(true);
+    localStorage.removeItem("token"); // Removendo token do localStorage
     api
       .post("/auth/login", values)
       .then((response) => {

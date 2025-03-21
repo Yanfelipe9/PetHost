@@ -26,6 +26,7 @@
     "next-auth": "^4.24.11",
     "react": "^18",
     "react-dom": "^18",
+    "react-imask": "^7.6.1",
     "remark": "^15.0.1",
     "remark-html": "^16.0.1",
     "winston": "^3.11.0"

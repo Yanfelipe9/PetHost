@@ -1,5 +1,5 @@
 'use client'
-import { createContext, useContext, useState, ReactNode } from "react";
+import { createContext, useContext, useState, ReactNode, useEffect } from "react";
 
 
 interface User {
@@ -32,6 +32,19 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
     localStorage.removeItem("user");
     localStorage.removeItem("token");
   };
+
+
+
+  const loadUser = () => {
+    const user = localStorage.getItem("user");
+    if (user) {
+      setUser(JSON.parse(user));
+    }
+  }
+
+  useEffect(() => {
+    loadUser();
+  }, [])
 
   return (
     <AuthContext.Provider value={{ user, login, logout }}>
