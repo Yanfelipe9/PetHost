@@ -1,5 +1,7 @@
 import { Prompt } from "next/font/google";
 import "./globals.css";
+import "antd/dist/reset.css"; // Importação correta para Ant Design 5+
+
 import AuthProvider from "@/components/AuthProvider";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
 import { AuthContextProvider } from "./context/AuthContext";
