@@ -1,14 +1,15 @@
 'use client'
-import React, { useState } from "react";
-import { Table, Input, Button, Space, Flex, Modal, Form, RadioChangeEvent,Radio, Avatar, Layout} from "antd";
-//Fazer o formulario
-const { Header, Footer, Sider, Content } = Layout;
+import { Table, Input, Button, Space, Flex, Modal, Form, Radio, Avatar, Layout, Select } from "antd";
 import { SearchOutlined, FilterOutlined, UserOutlined } from "@ant-design/icons";
 import styles from './pets.module.css'
 import Image from 'next/image';
 import imgPet from './pngtree-dog-logo-design-vector-icon-png-image_1824202 5.png'
+import api from "@/utils/axios";
+import { useAuth } from "@/app/context/AuthContext";
+import React, { useEffect, useState } from "react";
 
-//Layout Formulario
+// Layout Formulario
+const { Header, Footer, Sider, Content } = Layout;
 const headerStyle = {
   textAlign: 'center',
   height: 64,
@@ -38,56 +39,93 @@ const layoutStyle = {
   maxWidth: 'calc(100% - 8px)',
 };
 
-const mockData= [
-  { key: "1", id: "5644", name: "Totó", breed: "Golden", owner: "João", phone: "(85)999999999", observations: "Problemas de pelagem" },
-  { key: "2", id: "6112", name: "Pegasus", breed: "Spitz", owner: "José", phone: "(85)999999999", observations: "Alergia a ração de peixe" },
-  { key: "3", id: "6141", name: "Cristal", breed: "Chow-Chow", owner: "Raimundo", phone: "(85)999999999", observations: "Sem Observações" },
-  { key: "4", id: "6535", name: "Shelby", breed: "A684", owner: "Francisco", phone: "(85)999999999", observations: "Sem Observações" },
-  { key: "5", id: "6541", name: "Luke", breed: "B464", owner: "Maria", phone: "(85)999999999", observations: "Sem Observações" },
-  { key: "6", id: "9846", name: "Yadrin", breed: "C648", owner: "José", phone: "(85)999999999", observations: "Sem Observações" },
-  { key: "7", id: "4921", name: "Kiand", breed: "D644", owner: "Francisco", phone: "(85)999999999", observations: "Sem Observações" },
-  { key: "8", id: "9841", name: "Turen", breed: "B641", owner: "Maria", phone: "(85)999999999", observations: "Sem Observações" },
-];
-
 const PetTable = () => {
   const [searchText, setSearchText] = useState("");
   const [position, setPosition] = useState('start');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [form] = Form.useForm();
-  const [value, setValue] = useState(1);
+  const [value, setValue] = useState('');
+  const { user } = useAuth();
+  const [pets, setPets] = useState([]);
+  const [clientes, setClientes] = useState([]);
+
+  // Buscar Pets
+  useEffect(() => {
+    const fetchPets = async () => {
+      try {
+        const response = await api.get("/pets");
+        setPets(response.data);
+      } catch (error) {
+        console.error("Erro ao buscar pets:", error);
+      }
+    };
+
+    fetchPets();
+  }, []);
+
+  // Buscar Clientes
+  useEffect(() => {
+    const fetchClientes = async () => {
+      try {
+        const response = await api.get("/clientes/user/" + user?.userId);  // Ajuste a URL conforme necessário
+        setClientes(response.data);
+      } catch (error) {
+        console.error("Erro ao buscar clientes:", error);
+      }
+    };
+
+    fetchClientes();
+  }, [user?.userId]);
 
   const onChange = (e) => {
     setValue(e.target.value);
   };
+
   const showModal = () => {
     setIsModalOpen(true);
   };
 
-  const handleOk = () => {
-    form.validateFields().then((values) => {
-      console.log('Pet cadastrado:', values);
-      setIsModalOpen(false);
-      form.resetFields();
-    });
+  const onChangeSelect = (value) => {
+    console.log(`selected ${value}`);
+  };
+
+  const onSearch = (value) => {
+    console.log('search:', value);
+  };
+
+  const handleOk = async () => {
+    try {
+      const values = await form.validateFields();
+
+      const body = {
+        nome: values.nome,
+        sexo: values.sexo,
+        racaPet: values.racaPet,
+        observacoes: values.observacoes,
+        userId: user?.userId,
+        clienteId: values.clienteId,  // Passando o clienteId
+      };
+
+      await api.post("/pets", body);  // Realiza a requisição
+      setPets((prev) => [...prev, body]);  // Atualiza o estado com o pet recém-criado
+      setIsModalOpen(false);  // Fecha o modal
+      form.resetFields();  // Limpa os campos do formulário
+    } catch (error) {
+      console.error("Erro ao cadastrar pet:", error);
+    }
   };
 
   const handleCancel = () => {
     setIsModalOpen(false);
   };
-  
-  const filteredData = mockData.filter(
-    (item) =>
-      item.name.toLowerCase().includes(searchText.toLowerCase()) ||
-      item.owner.toLowerCase().includes(searchText.toLowerCase())
-  );
 
   const columns = [
     { title: "ID do Pet", dataIndex: "id", key: "id" },
-    { title: "Nome do Pet", dataIndex: "name", key: "name" },
-    { title: "Raça do Pet", dataIndex: "breed", key: "breed" },
-    { title: "Nome do Dono", dataIndex: "owner", key: "owner" },
-    { title: "Número do Dono", dataIndex: "phone", key: "phone" },
-    { title: "Observações", dataIndex: "observations", key: "observations" },
+    { title: "Nome do Pet", dataIndex: "nome", key: "nome" },
+    { title: "Raça do Pet", dataIndex: "racaPet", key: "racaPet" },
+    { title: "Nome do Dono", dataIndex: ["cliente", "nome"], key: "cliente.nome" },
+    { title: "Número do Dono", dataIndex: ["cliente", "telefone"], key: "cliente.telefone" },
+    { title: "Observações", dataIndex: "observacoes", key: "observacoes" },
   ];
 
   return (
@@ -101,143 +139,85 @@ const PetTable = () => {
             prefix={<SearchOutlined />}
           />
           <Button icon={<FilterOutlined />} iconPosition={position}>
-              Filtrar
+            Filtrar
           </Button>
         </Space>
-          <div></div>
-          <Button type="primary" onClick={showModal} className={styles.createButton}>
-            Criar
-          </Button>
+        <Button type="primary" onClick={showModal} className={styles.createButton}>
+          Criar
+        </Button>
       </Flex>
       <Table
         columns={columns}
-        dataSource={filteredData}
-        pagination={{ pageSize: 5 }}
+        dataSource={pets}
+        pagination={false}
+        rowKey="id"
       />
-    <Modal
-      open={isModalOpen}
-      onOk={handleOk}
-      onCancel={handleCancel}
-      width={1000}
-    >
-      <Layout style={layoutStyle}>
-      <Header style={headerStyle}>Cadastrar Pet</Header>
-      <Layout>
-        <Sider width="25%" style={siderStyle}>
-          <Image src={imgPet} size={120} />
-        </Sider>
-        <Content style={contentStyle}>
-          <Form form={form} layout="vertical">
-            <Space size={159}>
-              <Form.Item style={{width: '120%'}} name="name" label="Nome do Pet" rules={[{ required: true }]}>
-                <Input style={{width: '120%'}} />
-              </Form.Item>
-              <Form.Item style={{width: '120%'}} name="Data_Nascimento" label="Data de Nascimento do Pet" rules={[{ required: true }]}>
-                <Input style={{width: '120%'}} />
-              </Form.Item>
-              <div></div>
-            </Space>
-            <Form.Item name="Sexo" label="Sexo" rules={[{ required: true }]}style={{width: "30%"}}>
-              <Radio.Group
-                onChange={onChange}
-                value={value}
-                options={[
-                  {
-                    value: 1,
-                    label: (
-                      <Flex gap="small" justify="center" align="center" vertical>
-                        Macho
-                      </Flex>
-                    ),
-                  },
-                  {
-                    value: 2,
-                    label: (
-                      <Flex gap="small" justify="center" align="center" vertical>
-                        Femea
-                      </Flex>
-                    ),
-                  },
-                ]}
-              />
-            </Form.Item>
-          </Form>
-        </Content>
-      </Layout>
-      <Footer style={footerStyle}>
-        <Space size={200}>
-          <Form.Item name="Raça" label="Raça/Caracteristicas do Pet" rules={[{ required: true }]}>
-            <Input style={{width: '160%'}}/>
-          </Form.Item>
-          <Form.Item name="Cuidados" label="Doenças/Cuidados do Pet" rules={[{ required: true }]}>
-            <Input style={{width: '160%'}}/>
-          </Form.Item>
-          <div></div>
-          </Space>
-        <Space size={200}>
-          <Form.Item name="Nome_Dono" label="Nome do Dono" rules={[{ required: true }]}>
-            <Input style={{width: '160%'}}/>
-          </Form.Item>
-          <Form.Item name="Telefone" label="Número do Dono" rules={[{ required: true }]}>
-            <Input style={{width: '160%'}}/>
-          </Form.Item>
-          <div></div>
-        </Space>
-        <Form.Item style={{width: '100%'}} name="Observações" label="Observações">
-          <Input.TextArea />
-        </Form.Item>
-      </Footer>
-    </Layout>
-      {/* <Form form={form} layout="vertical">
-        <Avatar size={64} icon={<UserOutlined />} />
-        <Form.Item name="name" label="Nome do Pet" rules={[{ required: true }]}>
-          <Input />
-        </Form.Item>
-        <Form.Item name="Data_Nascimento" label="Data de Nascimento do Pet" rules={[{ required: true }]}>
-          <Input />
-        </Form.Item>
-        <Form.Item name="Sexo" label="Sexo" rules={[{ required: true }]}>
-        <Radio.Group
-          onChange={onChange}
-          value={value}
-          options={[
-            {
-              value: 1,
-              label: (
-                <Flex gap="small" justify="center" align="center" vertical>
-                  Macho
-                </Flex>
-              ),
-            },
-            {
-              value: 2,
-              label: (
-                <Flex gap="small" justify="center" align="center" vertical>
-                  Femea
-                </Flex>
-              ),
-            },
-          ]}
-        />
-        </Form.Item>
-        <Form.Item name="Raça" label="Raça/Caracteristicas do Pet" rules={[{ required: true }]}>
-          <Input />
-        </Form.Item>
-        <Form.Item name="Cuidados" label="Doenças/Cuidados do Pet" rules={[{ required: true }]}>
-          <Input />
-        </Form.Item>
-        <Form.Item name="Nome_Dono" label="Nome do Dono" rules={[{ required: true }]}>
-          <Input />
-        </Form.Item>
-        <Form.Item name="Telefone" label="Número do Dono" rules={[{ required: true }]}>
-          <Input />
-        </Form.Item>
-        <Form.Item name="Observações" label="Observações">
-          <Input.TextArea />
-        </Form.Item>
-      </Form> */}
-    </Modal>
+      <Modal
+        open={isModalOpen}
+        onOk={handleOk}
+        onCancel={handleCancel}
+        width={1000}
+      >
+        <Layout style={layoutStyle}>
+          <Header style={headerStyle}>Cadastrar Pet</Header>
+          <Layout>
+            <Sider width="25%" style={siderStyle}>
+              <Image src={imgPet} alt="Imagem de um pet" width={120} height={120} />
+            </Sider>
+            <Content style={contentStyle}>
+              <Form form={form} layout="vertical">
+                <Form.Item name="nome" label="Nome do Pet" rules={[{ required: true }]}>
+                  <Input />
+                </Form.Item>
+                <Space size={200}>
+                  <Form.Item name="sexo" label="Sexo" rules={[{ required: true }]} style={{ width: "150%" }}>
+                    <Radio.Group
+                      onChange={onChange}
+                      value={value}
+                      options={[
+                        {
+                          value: 'macho',
+                          label: 'Macho',
+                        },
+                        {
+                          value: 'femea',
+                          label: 'Fêmea',
+                        },
+                      ]}
+                    />
+                  </Form.Item>
 
+                  <Form.Item name="racaPet" label="Raça/Características do Pet" rules={[{ required: true }]}>
+                    <Input style={{ width: '100%' }} />
+                  </Form.Item>
+                </Space>
+
+                {/* Selecione o Cliente */}
+                <Form.Item name="clienteId" label="Cliente" rules={[{ required: true }]}>
+                  <Select
+                    showSearch
+                    placeholder="Selecione um Cliente"
+                    onChange={(value) => form.setFieldsValue({ clienteId: value })}  // Atualiza o clienteId no formulário
+                    filterOption={(input, option) =>
+                      option.label.toLowerCase().includes(input.toLowerCase())
+                    }
+                    options={clientes.map(cliente => ({
+                      value: cliente.id,
+                      label: `${cliente.nome} - ${cliente.telefone}`  // Exibe o nome e telefone do cliente
+                    }))}
+                  />
+                </Form.Item>
+
+                {/* Observações */}
+                <Form.Item style={{ width: '100%' }} name="observacoes" label="Observações">
+                  <Input.TextArea />
+                </Form.Item>
+              </Form>
+            </Content>
+          </Layout>
+          <Footer style={footerStyle}></Footer>
+        </Layout>
+      </Modal>
     </div>
   );
 };
