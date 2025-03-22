@@ -1,5 +1,5 @@
 'use client'
-import { Table, Input, Button, Space, Flex, Modal, Form, Radio, Avatar, Layout, Select } from "antd";
+import { Table, Input, Button, Space, Flex, Modal, Form, Radio, Avatar, Layout, Select, Pagination } from "antd";
 import { SearchOutlined, FilterOutlined, UserOutlined } from "@ant-design/icons";
 import styles from './pets.module.css'
 import Image from 'next/image';
@@ -148,10 +148,13 @@ const PetTable = () => {
       </Flex>
       <Table
         columns={columns}
-        dataSource={pets}
+        dataSource={pets || []}
         pagination={false}
         rowKey="id"
       />
+      <Flex justify="center" className={styles.paginationContainer}>
+        <Pagination defaultCurrent={1} total={pets.length} />
+      </Flex>
       <Modal
         open={isModalOpen}
         onOk={handleOk}
