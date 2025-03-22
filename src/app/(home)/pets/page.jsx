@@ -198,6 +198,9 @@ const PetTable = () => {
                     showSearch
                     placeholder="Selecione um Cliente"
                     onChange={(value) => form.setFieldsValue({ clienteId: value })}  // Atualiza o clienteId no formulário
+                    filterOption={(input, option) =>
+                      option.label.toLowerCase().includes(input.toLowerCase())
+                    }
                     options={clientes.map(cliente => ({
                       value: cliente.id,
                       label: `${cliente.nome} - ${cliente.telefone}`  // Exibe o nome e telefone do cliente
