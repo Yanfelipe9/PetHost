@@ -49,28 +49,41 @@ const PetTable = () => {
   const [pets, setPets] = useState([]);
   const [clientes, setClientes] = useState([]);
 
-  // Buscar Pets
+  
+
   useEffect(() => {
-    const fetchPets = async () => {
+    if (!user?.userId) return;
+  
+    const fetchClientesComPets = async () => {
       try {
-        const response = await api.get('/pets');
-        setPets(response.data);
+        // Busca os clientes com seus respectivos pets
+        const response = await api.get(`/clientes/user/${user.userId}`);
+        const clientesComPets = response.data; // Agora temos os clientes e seus pets
+  
+        // Mapeia os pets e associa ao cliente
+        const petsComDono = clientesComPets.flatMap(cliente => {
+          return cliente.pets.map(pet => ({
+            ...pet,  // Acessamos as informações do pet
+            clienteNome: cliente.nome,  // Adiciona o nome do dono ao pet
+            clienteTelefone: cliente.telefone  // Adiciona o telefone do dono ao pet
+          }));
+        });
+  
+        setPets(petsComDono);  // Atualiza os pets no estado
       } catch (error) {
-        console.error("Erro ao buscar pets:", error);
+        console.error("Erro ao buscar clientes e pets:", error);
       }
     };
-    
-    fetchPets();
-    
-  }, []);
   
+    fetchClientesComPets();
+  }, [user?.userId]);
 
   // Buscar Clientes
   useEffect(() => {
     const fetchClientes = async () => {
-      
       try {
-        const response = await api.get("/clientes/user/" + user?.userId);  // Ajuste a URL conforme necessário
+        const response = await api.get("/clientes/user/" + user?.userId);  
+        console.log("Clientes carregados:", response.data); //  Verifica se os clientes estão vindo corretamente
         setClientes(response.data);
       } catch (error) {
         console.error("Erro ao buscar clientes:", error);
@@ -89,7 +102,7 @@ const PetTable = () => {
   };
 
   const onChangeSelect = (value) => {
-    console.log(`selected ${value}`);
+    console.log(`Selecionado: ${value}`);
   };
 
   const onSearch = (value) => {
@@ -97,30 +110,41 @@ const PetTable = () => {
   };
 
   const handleOk = async () => {
-  try {
-    const values = await form.validateFields();
-    
-    const body = {
-      nome: values.nome,
-      sexo: values.sexo,
-      racaPet: values.racaPet,
-      observacoes: values.observacoes,
-      clienteId: values.clienteId,
-    };
-
-    console.log("Enviando para API:", body); // 👈 Verifica os dados antes do envio
-
-    const response = await api.post("/pets", body);
-    setPets((prev) => [...prev, response.data]); 
-
-    setIsModalOpen(false);
-    form.resetFields();
-  } catch (error) {
-    console.error("Erro ao cadastrar pet:", error);
-  }
-};
-
+    try {
+      const values = await form.validateFields();
   
+      const body = {
+        nome: values.nome,
+        sexo: values.sexo,
+        racaPet: values.racaPet,
+        observacoes: values.observacoes,
+        cliente: {
+          id: values.clienteId, 
+        },
+      };
+  
+      // Envia o pet para a API
+      const response = await api.post("/pets", body);
+  
+      // Agora, vamos buscar o nome e o telefone do cliente
+      const clienteSelecionado = clientes.find(cliente => cliente.id === values.clienteId);
+  
+      // Agora, adiciona o nome e telefone do dono ao pet
+      const novoPetComDono = {
+        ...response.data, // Os dados do pet
+        clienteNome: clienteSelecionado?.nome,  // Nome do cliente
+        clienteTelefone: clienteSelecionado?.telefone,  // Telefone do cliente
+      };
+  
+      // Atualiza o estado dos pets com o novo pet já com as informações do dono
+      setPets(prevPets => [...prevPets, novoPetComDono]);
+  
+      setIsModalOpen(false);
+      form.resetFields();
+    } catch (error) {
+      console.error("Erro ao cadastrar pet:", error);
+    }
+  };
 
   const handleCancel = () => {
     setIsModalOpen(false);
@@ -130,8 +154,8 @@ const PetTable = () => {
     { title: "ID do Pet", dataIndex: "id", key: "id" },
     { title: "Nome do Pet", dataIndex: "nome", key: "nome" },
     { title: "Raça do Pet", dataIndex: "racaPet", key: "racaPet" },
-    { title: "Nome do Dono", dataIndex: ["cliente", "nome"], key: "cliente.nome" },
-    { title: "Número do Dono", dataIndex: ["cliente", "telefone"], key: "cliente.telefone" },
+    { title: "Nome do Dono", dataIndex: "clienteNome", key: "clienteNome" },  // Aqui usamos clienteNome
+    { title: "Número do Dono", dataIndex: "clienteTelefone", key: "clienteTelefone" },  // Aqui usamos clienteTelefone
     { title: "Observações", dataIndex: "observacoes", key: "observacoes" },
   ];
 
@@ -176,14 +200,12 @@ const PetTable = () => {
             </Sider>
             <Content style={contentStyle}>
               <Form form={form} layout="vertical">
-              <Form.Item name="nome" label="Nome do Pet" rules={[{ required: true }]}>
-                <Input id="nome" />
-              </Form.Item>
-
+                <Form.Item name="nome" label="Nome do Pet" rules={[{ required: true }]}>
+                  <Input />
+                </Form.Item>
                 <Space size={200}>
                   <Form.Item name="sexo" label="Sexo" rules={[{ required: true }]} style={{ width: "150%" }}>
                     <Radio.Group
-                      id="sexo"
                       onChange={onChange}
                       value={value}
                       options={[
@@ -200,14 +222,13 @@ const PetTable = () => {
                   </Form.Item>
 
                   <Form.Item name="racaPet" label="Raça/Características do Pet" rules={[{ required: true }]}>
-                    <Input style={{ width: '100%' }} id="racaPet" />
+                    <Input style={{ width: '100%' }} />
                   </Form.Item>
                 </Space>
 
                 {/* Selecione o Cliente */}
                 <Form.Item name="clienteId" label="Cliente" rules={[{ required: true }]}>
                   <Select
-                    id="clienteId"
                     showSearch
                     placeholder="Selecione um Cliente"
                     onChange={(value) => form.setFieldsValue({ clienteId: value })}  // Atualiza o clienteId no formulário
@@ -223,7 +244,7 @@ const PetTable = () => {
 
                 {/* Observações */}
                 <Form.Item style={{ width: '100%' }} name="observacoes" label="Observações">
-                  <Input.TextArea  id="observacoes"/>
+                  <Input.TextArea />
                 </Form.Item>
               </Form>
             </Content>

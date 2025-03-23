@@ -21,17 +21,19 @@ const Clientes = () => {
   const [form] = Form.useForm();
 
   useEffect(() => {
+    if (!user?.userId) return; // Aguarda o userId estar carregado antes de buscar clientes
+  
     const fetchClientes = async () => {
       try {
-        const response = await api.get("/clientes");
+        const response = await api.get(`/clientes/user/${user.userId}`);
         setClientes(response.data);
       } catch (error) {
         console.error("Erro ao buscar clientes:", error);
       }
     };
-
+  
     fetchClientes();
-  }, []);
+  }, [user?.userId]);
 
   const showModal = () => setIsModalOpen(true);
   const handleCancel = () => setIsModalOpen(false);
