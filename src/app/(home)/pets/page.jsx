@@ -53,19 +53,22 @@ const PetTable = () => {
   useEffect(() => {
     const fetchPets = async () => {
       try {
-        const response = await api.get("/pets");
+        const response = await api.get('/pets');
         setPets(response.data);
       } catch (error) {
         console.error("Erro ao buscar pets:", error);
       }
     };
-
+    
     fetchPets();
+    
   }, []);
+  
 
   // Buscar Clientes
   useEffect(() => {
     const fetchClientes = async () => {
+      
       try {
         const response = await api.get("/clientes/user/" + user?.userId);  // Ajuste a URL conforme necessário
         setClientes(response.data);
@@ -94,26 +97,30 @@ const PetTable = () => {
   };
 
   const handleOk = async () => {
-    try {
-      const values = await form.validateFields();
+  try {
+    const values = await form.validateFields();
+    
+    const body = {
+      nome: values.nome,
+      sexo: values.sexo,
+      racaPet: values.racaPet,
+      observacoes: values.observacoes,
+      clienteId: values.clienteId,
+    };
 
-      const body = {
-        nome: values.nome,
-        sexo: values.sexo,
-        racaPet: values.racaPet,
-        observacoes: values.observacoes,
-        userId: user?.userId,
-        clienteId: values.clienteId,  // Passando o clienteId
-      };
+    console.log("Enviando para API:", body); // 👈 Verifica os dados antes do envio
 
-      await api.post("/pets", body);  // Realiza a requisição
-      setPets((prev) => [...prev, body]);  // Atualiza o estado com o pet recém-criado
-      setIsModalOpen(false);  // Fecha o modal
-      form.resetFields();  // Limpa os campos do formulário
-    } catch (error) {
-      console.error("Erro ao cadastrar pet:", error);
-    }
-  };
+    const response = await api.post("/pets", body);
+    setPets((prev) => [...prev, response.data]); 
+
+    setIsModalOpen(false);
+    form.resetFields();
+  } catch (error) {
+    console.error("Erro ao cadastrar pet:", error);
+  }
+};
+
+  
 
   const handleCancel = () => {
     setIsModalOpen(false);
@@ -169,12 +176,14 @@ const PetTable = () => {
             </Sider>
             <Content style={contentStyle}>
               <Form form={form} layout="vertical">
-                <Form.Item name="nome" label="Nome do Pet" rules={[{ required: true }]}>
-                  <Input />
-                </Form.Item>
+              <Form.Item name="nome" label="Nome do Pet" rules={[{ required: true }]}>
+                <Input id="nome" />
+              </Form.Item>
+
                 <Space size={200}>
                   <Form.Item name="sexo" label="Sexo" rules={[{ required: true }]} style={{ width: "150%" }}>
                     <Radio.Group
+                      id="sexo"
                       onChange={onChange}
                       value={value}
                       options={[
@@ -191,13 +200,14 @@ const PetTable = () => {
                   </Form.Item>
 
                   <Form.Item name="racaPet" label="Raça/Características do Pet" rules={[{ required: true }]}>
-                    <Input style={{ width: '100%' }} />
+                    <Input style={{ width: '100%' }} id="racaPet" />
                   </Form.Item>
                 </Space>
 
                 {/* Selecione o Cliente */}
                 <Form.Item name="clienteId" label="Cliente" rules={[{ required: true }]}>
                   <Select
+                    id="clienteId"
                     showSearch
                     placeholder="Selecione um Cliente"
                     onChange={(value) => form.setFieldsValue({ clienteId: value })}  // Atualiza o clienteId no formulário
@@ -213,7 +223,7 @@ const PetTable = () => {
 
                 {/* Observações */}
                 <Form.Item style={{ width: '100%' }} name="observacoes" label="Observações">
-                  <Input.TextArea />
+                  <Input.TextArea  id="observacoes"/>
                 </Form.Item>
               </Form>
             </Content>
