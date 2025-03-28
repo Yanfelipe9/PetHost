@@ -7,7 +7,7 @@ import api from "@/utils/axios";
 import { useAuth } from "@/app/context/AuthContext";
 
 const columns = [
-  { title: "Baia", dataIndex: "baia", key: "baia" },
+  { title: "Baia", dataIndex: "descricao", key: "descricao" },
   { title: "Status", dataIndex: "status", key: "status" },
 ];
 
@@ -18,28 +18,23 @@ const Baias = () => {
   const [position, setPosition] = useState('start');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [form] = Form.useForm();
-
-  const mockBaiasData = [
-    { id: 1, baia: 'Baia 1', status: 'Ativo' },
-    { id: 2, baia: 'Baia 2', status: 'Inativo' },
-    { id: 3, baia: 'Baia 3', status: 'Ativo' },
-    { id: 4, baia: 'Baia 4', status: 'Ativo' },
-    { id: 5, baia: 'Baia 5', status: 'Inativo' },
-  ];
+  const [currentPage, setCurrentPage] = useState(1);  // Controle da página atual
+  const pageSize = 10;  // Número de itens por página
 
   useEffect(() => {
-    // const fetchBaias = async () => {
-    //   try {
-    //     const response = await api.get("/baias/{user.id}");
-    //     setBaias(response.data);
-    //   } catch (error) {
-    //     console.error("Erro ao buscar baias:", error);
-    //   }
-    // };
+    if (user && user.userId) {  // Verificando se o user e userId existem
+      const fetchBaias = async () => {
+        try {
+          const response = await api.get(`/baias/${user.userId}`);
+          setBaias(response.data);
+        } catch (error) {
+          console.error("Erro ao buscar baias:", error);
+        }
+      };
 
-    // fetchBaias();
-    setBaias(mockBaiasData)
-  }, []);
+      fetchBaias();
+    }
+  }, [user]);
 
   const showModal = () => setIsModalOpen(true);
 
@@ -51,17 +46,30 @@ const Baias = () => {
 
       const body = {
         userId: user.userId,
-        descricao: values.descricao, 
+        descricao: values.descricao,
       };
 
-      await api.post("/baias", body);
+      const response = await api.post("/baias", body);
       setIsModalOpen(false);
       form.resetFields();
-      setBaias((prev) => [...prev, values]);
+      setBaias((prev) => [...prev, response.data]);
     } catch (error) {
       console.error("Erro ao cadastrar baia:", error);
     }
   };
+
+  // Função para lidar com a mudança de página
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
+  // Filtrar baias com base no texto de busca
+  const filteredBaias = baias.filter((baia) =>
+    baia.descricao.toLowerCase().includes(searchText.toLowerCase())
+  );
+
+  // Obter os dados da página atual
+  const paginatedBaias = filteredBaias.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
   return (
     <div style={{ padding: 20 }} className={styles.container}>
@@ -85,16 +93,19 @@ const Baias = () => {
       <div className={styles.tableContainer}>
         <Table
           columns={columns}
-          dataSource={baias.filter((baia) =>
-            baia.baia.toLowerCase().includes(searchText.toLowerCase())
-          )}
+          dataSource={paginatedBaias}
           pagination={false}
           rowKey="id"
         />
       </div>
 
       <Flex justify="center" className={styles.paginationContainer}>
-        <Pagination defaultCurrent={1} total={baias.length} />
+        <Pagination
+          current={currentPage}  // Página atual
+          pageSize={pageSize}  // Número de itens por página
+          total={filteredBaias.length}  // Total de itens
+          onChange={handlePageChange}  // Função chamada ao mudar de página
+        />
       </Flex>
 
       <Modal
