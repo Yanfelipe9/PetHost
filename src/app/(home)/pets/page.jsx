@@ -1,15 +1,16 @@
 'use client'
-import { Table, Input, Button, Space, Flex, Modal, Form, Radio, Avatar, Layout, Select, Pagination } from "antd";
-import { SearchOutlined, FilterOutlined, UserOutlined } from "@ant-design/icons";
-import styles from './pets.module.css'
+import { Table, Input, Button, Space, Flex, Modal, Form, Radio, Avatar, Layout, Select, Pagination, Tabs } from "antd";
+import { SearchOutlined, FilterOutlined } from "@ant-design/icons";
+import styles from './pets.module.css';
 import Image from 'next/image';
-import imgPet from './pngtree-dog-logo-design-vector-icon-png-image_1824202 5.png'
+import imgPet from './pngtree-dog-logo-design-vector-icon-png-image_1824202 5.png';
 import api from "@/utils/axios";
 import { useAuth } from "@/app/context/AuthContext";
 import React, { useEffect, useState } from "react";
 
-// Layout Formulario
 const { Header, Footer, Sider, Content } = Layout;
+const { TabPane } = Tabs;
+
 const headerStyle = {
   textAlign: 'center',
   height: 64,
@@ -43,47 +44,42 @@ const PetTable = () => {
   const [searchText, setSearchText] = useState("");
   const [position, setPosition] = useState('start');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState("cadastro");
   const [form] = Form.useForm();
-  const [value, setValue] = useState('');
   const { user } = useAuth();
   const [pets, setPets] = useState([]);
   const [clientes, setClientes] = useState([]);
-
-  
+  const [value, setValue] = useState('');
 
   useEffect(() => {
     if (!user?.userId) return;
-  
+
     const fetchClientesComPets = async () => {
       try {
-        // Busca os clientes com seus respectivos pets
         const response = await api.get(`/clientes/user/${user.userId}`);
-        const clientesComPets = response.data; // Agora temos os clientes e seus pets
-  
-        // Mapeia os pets e associa ao cliente
+        const clientesComPets = response.data;
+
         const petsComDono = clientesComPets.flatMap(cliente => {
           return cliente.pets.map(pet => ({
-            ...pet,  // Acessamos as informações do pet
-            clienteNome: cliente.nome,  // Adiciona o nome do dono ao pet
-            clienteTelefone: cliente.telefone  // Adiciona o telefone do dono ao pet
+            ...pet,
+            clienteNome: cliente.nome,
+            clienteTelefone: cliente.telefone
           }));
         });
-  
-        setPets(petsComDono);  // Atualiza os pets no estado
+
+        setPets(petsComDono);
       } catch (error) {
         console.error("Erro ao buscar clientes e pets:", error);
       }
     };
-  
+
     fetchClientesComPets();
   }, [user?.userId]);
 
-  // Buscar Clientes
   useEffect(() => {
     const fetchClientes = async () => {
       try {
-        const response = await api.get("/clientes/user/" + user?.userId);  
-        console.log("Clientes carregados:", response.data); //  Verifica se os clientes estão vindo corretamente
+        const response = await api.get("/clientes/user/" + user?.userId);
         setClientes(response.data);
       } catch (error) {
         console.error("Erro ao buscar clientes:", error);
@@ -101,48 +97,40 @@ const PetTable = () => {
     setIsModalOpen(true);
   };
 
-  const onChangeSelect = (value) => {
-    console.log(`Selecionado: ${value}`);
-  };
-
-  const onSearch = (value) => {
-    console.log('search:', value);
-  };
-
   const handleOk = async () => {
     try {
       const values = await form.validateFields();
-  
-      const body = {
-        nome: values.nome,
-        sexo: values.sexo,
-        racaPet: values.racaPet,
-        observacoes: values.observacoes,
-        cliente: {
-          id: values.clienteId, 
-        },
-      };
-  
-      // Envia o pet para a API
-      const response = await api.post("/pets", body);
-  
-      // Agora, vamos buscar o nome e o telefone do cliente
-      const clienteSelecionado = clientes.find(cliente => cliente.id === values.clienteId);
-  
-      // Agora, adiciona o nome e telefone do dono ao pet
-      const novoPetComDono = {
-        ...response.data, // Os dados do pet
-        clienteNome: clienteSelecionado?.nome,  // Nome do cliente
-        clienteTelefone: clienteSelecionado?.telefone,  // Telefone do cliente
-      };
-  
-      // Atualiza o estado dos pets com o novo pet já com as informações do dono
-      setPets(prevPets => [...prevPets, novoPetComDono]);
-  
+
+      if (activeTab === "cadastro") {
+        const body = {
+          nome: values.nome,
+          sexo: values.sexo,
+          racaPet: values.racaPet,
+          observacoes: values.observacoes,
+          cliente: {
+            id: values.clienteId,
+          },
+        };
+
+        const response = await api.post("/pets", body);
+        const clienteSelecionado = clientes.find(cliente => cliente.id === values.clienteId);
+
+        const novoPetComDono = {
+          ...response.data,
+          clienteNome: clienteSelecionado?.nome,
+          clienteTelefone: clienteSelecionado?.telefone,
+        };
+
+        setPets(prevPets => [...prevPets, novoPetComDono]);
+      } else if (activeTab === "agendamento") {
+        console.log("Agendamento:", values);
+        // Aqui você pode colocar a lógica de envio para a API de agendamento
+      }
+
       setIsModalOpen(false);
       form.resetFields();
     } catch (error) {
-      console.error("Erro ao cadastrar pet:", error);
+      console.error("Erro ao salvar:", error);
     }
   };
 
@@ -154,8 +142,8 @@ const PetTable = () => {
     { title: "ID do Pet", dataIndex: "id", key: "id" },
     { title: "Nome do Pet", dataIndex: "nome", key: "nome" },
     { title: "Raça do Pet", dataIndex: "racaPet", key: "racaPet" },
-    { title: "Nome do Dono", dataIndex: "clienteNome", key: "clienteNome" },  // Aqui usamos clienteNome
-    { title: "Número do Dono", dataIndex: "clienteTelefone", key: "clienteTelefone" },  // Aqui usamos clienteTelefone
+    { title: "Nome do Dono", dataIndex: "clienteNome", key: "clienteNome" },
+    { title: "Número do Dono", dataIndex: "clienteTelefone", key: "clienteTelefone" },
     { title: "Observações", dataIndex: "observacoes", key: "observacoes" },
   ];
 
@@ -177,12 +165,7 @@ const PetTable = () => {
           Criar
         </Button>
       </Flex>
-      <Table
-        columns={columns}
-        dataSource={pets || []}
-        pagination={false}
-        rowKey="id"
-      />
+      <Table columns={columns} dataSource={pets || []} pagination={false} rowKey="id" />
       <Flex justify="center" className={styles.paginationContainer}>
         <Pagination defaultCurrent={1} total={pets.length} />
       </Flex>
@@ -192,60 +175,49 @@ const PetTable = () => {
         onCancel={handleCancel}
         width={1000}
       >
+        <Tabs activeKey={activeTab} onChange={setActiveTab} centered>
+          <TabPane tab="Cadastro" key="cadastro" />
+          <TabPane tab="Agendamento" key="agendamento" />
+        </Tabs>
         <Layout style={layoutStyle}>
-          <Header style={headerStyle}>Cadastrar Pet</Header>
+          <Header style={headerStyle}>{activeTab === "cadastro" ? "Cadastrar Pet" : "Agendamento"}</Header>
           <Layout>
             <Sider width="25%" style={siderStyle}>
               <Image src={imgPet} alt="Imagem de um pet" width={120} height={120} />
             </Sider>
             <Content style={contentStyle}>
               <Form form={form} layout="vertical">
-                <Form.Item name="nome" label="Nome do Pet" rules={[{ required: true }]}>
-                  <Input />
-                </Form.Item>
-                <Space size={200}>
-                  <Form.Item name="sexo" label="Sexo" rules={[{ required: true }]} style={{ width: "150%" }}>
-                    <Radio.Group
-                      onChange={onChange}
-                      value={value}
-                      options={[
-                        {
-                          value: 'macho',
-                          label: 'Macho',
-                        },
-                        {
-                          value: 'femea',
-                          label: 'Fêmea',
-                        },
-                      ]}
-                    />
-                  </Form.Item>
-
-                  <Form.Item name="racaPet" label="Raça/Características do Pet" rules={[{ required: true }]}>
-                    <Input style={{ width: '100%' }} />
-                  </Form.Item>
-                </Space>
-
-                {/* Selecione o Cliente */}
-                <Form.Item name="clienteId" label="Cliente" rules={[{ required: true }]}>
-                  <Select
-                    showSearch
-                    placeholder="Selecione um Cliente"
-                    onChange={(value) => form.setFieldsValue({ clienteId: value })}  // Atualiza o clienteId no formulário
-                    filterOption={(input, option) =>
-                      option.label.toLowerCase().includes(input.toLowerCase())
-                    }
-                    options={clientes.map(cliente => ({
-                      value: cliente.id,
-                      label: `${cliente.nome} - ${cliente.telefone}`  // Exibe o nome e telefone do cliente
-                    }))}
-                  />
-                </Form.Item>
-
-                {/* Observações */}
-                <Form.Item style={{ width: '100%' }} name="observacoes" label="Observações">
-                  <Input.TextArea />
-                </Form.Item>
+                {activeTab === "cadastro" ? (
+                  <>
+                    <Form.Item name="nome" label="Nome do Pet" rules={[{ required: true }]}> <Input /> </Form.Item>
+                    <Space size={200}>
+                      <Form.Item name="sexo" label="Sexo" rules={[{ required: true }]} style={{ width: "150%" }}>
+                        <Radio.Group
+                          onChange={onChange}
+                          value={value}
+                          options={[
+                            { value: 'macho', label: 'Macho' },
+                            { value: 'femea', label: 'Fêmea' },
+                          ]}
+                        />
+                      </Form.Item>
+                      <Form.Item name="racaPet" label="Raça/Características do Pet" rules={[{ required: true }]}> <Input /> </Form.Item>
+                    </Space>
+                    <Form.Item name="clienteId" label="Cliente" rules={[{ required: true }]}> <Select showSearch placeholder="Selecione um Cliente" options={clientes.map(cliente => ({ value: cliente.id, label: `${cliente.nome} - ${cliente.telefone}` }))} /> </Form.Item>
+                    <Form.Item name="observacoes" label="Observações"> <Input.TextArea /> </Form.Item>
+                  </>
+                ) : (
+                  <>
+                    <Form.Item name="busca" label="Pesquisar por pet"> <Input.Search placeholder="Buscar" /> </Form.Item>
+                    <Form.Item name="periodo" label="Período de estadia"> <Input /> </Form.Item>
+                    <Form.Item name="compartimento" label="Compartimento"> <Input /> </Form.Item>
+                    <Form.Item name="valor" label="Valor"> <Input type="number" prefix="R$" /> </Form.Item>
+                    <Form.Item name="pagamento" label="Forma de pagamento">
+                      <Select options={[{ value: "dinheiro", label: "Dinheiro" }, { value: "cartao", label: "Cartão" }, { value: "pix", label: "Pix" }]} />
+                    </Form.Item>
+                    <Form.Item name="obsAgendamento" label="Observações"> <Input.TextArea /> </Form.Item>
+                  </>
+                )}
               </Form>
             </Content>
           </Layout>
