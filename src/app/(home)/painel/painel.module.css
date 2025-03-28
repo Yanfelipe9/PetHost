@@ -1,0 +1,30 @@
+.dashboard-container {
+    min-height: 100vh;
+    background-color: #f5f5f5;
+    padding: 2rem;
+    display: flex;
+    align-items: flex-start; 
+    justify-content: center;
+  }
+  
+  .dashboard-card {
+    width: 100%;
+    max-width: 80rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+    margin-bottom: 4rem;
+  }
+  
+  .dashboard-row {
+    text-align: center;
+    margin-top: 2rem;
+    row-gap: 2.5rem !important;
+    column-gap: 4rem !important;
+  }
+  
+  .dashboard-title {
+    text-align: center;
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+  }
+  
