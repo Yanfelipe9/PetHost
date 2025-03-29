@@ -15,9 +15,10 @@ export default function Dashboard() {
     // Gráfico Radial
     if (chartRefRadial.current) {
       const optionsRadial = {
-        series: [76],
+        series: [80],
         chart: {
           type: "radialBar",
+          height: 250, 
           offsetY: -20,
           sparkline: {
             enabled: true,
@@ -83,7 +84,7 @@ export default function Dashboard() {
     // Gráfico de Barras
     if (chartRefBar.current) {
       const optionsBar = {
-        series: [{ data: ["0%", "25%", "50%", "75%", "100%"] }],
+        series: [{ data: ["10%", "25%", "50%", "75%", "100%", "20", "20", "20", "20", "20", "20", "20"] }],
         chart: {
           height: 350,
           type: "bar",
@@ -167,7 +168,7 @@ export default function Dashboard() {
       </Card>
 
       {/* Gráfico Radial */}
-      <Card bordered={false} className="dashboard-card">
+      <Card bordered={false} className="dashboard-card radial-card" style={{ alignSelf: "flex-end", marginLeft: "auto", width: "500px" }}>
         <Title level={4} className="dashboard-title">Status do Hotel</Title>
         <div id="chartRadial" ref={chartRefRadial}></div>
       </Card>
