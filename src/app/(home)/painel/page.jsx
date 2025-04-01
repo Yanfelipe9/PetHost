@@ -3,140 +3,109 @@
 import React, { useEffect, useRef } from "react";
 import { Card, Col, Row, Typography } from "antd";
 import ApexCharts from "apexcharts";
-import "./painel.module.css";
+import styles from "./painel.module.css";
 
 const { Title, Text } = Typography;
 
 export default function Dashboard() {
-  const chartRefBar = useRef(null); // Referência para o gráfico de barras
-  const chartRefRadial = useRef(null); // Referência para o gráfico radial
+  const chartRefBar = useRef(null);
+  const chartRefRadial = useRef(null);
 
   useEffect(() => {
-    // Gráfico Radial
     if (chartRefRadial.current) {
       const optionsRadial = {
         series: [80],
         chart: {
           type: "radialBar",
-          height: 250, 
-          offsetY: -20,
-          sparkline: {
-            enabled: true,
-          },
+          height: 180,
+          sparkline: { enabled: true },
         },
         plotOptions: {
           radialBar: {
             startAngle: -90,
             endAngle: 90,
             track: {
-              background: "#e7e7e7",
-              strokeWidth: "97%",
-              margin: 5,
-              dropShadow: {
-                enabled: true,
-                top: 2,
-                left: 0,
-                color: "#444",
-                opacity: 1,
-                blur: 2,
-              },
+              background: "#f0f0f0",
+              strokeWidth: "100%",
             },
             dataLabels: {
-              name: {
-                show: false,
-              },
+              name: { show: false },
               value: {
-                offsetY: -2,
-                fontSize: "22px",
+                offsetY: 5,
+                fontSize: "20px",
+                color: "#1f1f1f",
               },
             },
-          },
-        },
-        grid: {
-          padding: {
-            top: -10,
           },
         },
         fill: {
-          type: "gradient",
-          gradient: {
-            shade: "light",
-            shadeIntensity: 0.4,
-            inverseColors: false,
-            opacityFrom: 1,
-            opacityTo: 1,
-            stops: [0, 50, 53, 91],
-          },
+          type: "solid",
+          colors: ["#3b82f6"],
         },
-        labels: ["Average Results"],
+        stroke: {
+          lineCap: "round",
+        },
+        labels: ["Completo"],
       };
 
       const chartRadial = new ApexCharts(chartRefRadial.current, optionsRadial);
       chartRadial.render();
 
-      return () => {
-        chartRadial.destroy();
-      };
+      return () => chartRadial.destroy();
     }
   }, []);
 
   useEffect(() => {
-    // Gráfico de Barras
     if (chartRefBar.current) {
       const optionsBar = {
-        series: [{ data: ["10%", "25%", "50%", "75%", "100%", "20", "20", "20", "20", "20", "20", "20"] }],
+        series: [
+          {
+            data: [70, 40, 60, 75, 95, 30, 65, 85, 90, 88, 92, 96],
+          },
+        ],
         chart: {
-          height: 350,
+          height: 250,
           type: "bar",
+          toolbar: { show: false },
         },
-        colors: ["#008FFB"],
         plotOptions: {
           bar: {
-            columnWidth: "45%",
-            distributed: true,
+            borderRadius: 4,
+            columnWidth: "55%",
           },
         },
         dataLabels: { enabled: false },
-        legend: { show: false },
         xaxis: {
           categories: [
-            "Janeiro",
-            "Fevereiro",
-            "Março",
-            "Abril",
-            "Maio",
-            "Junho",
-            "Julho",
-            "Agosto",
-            "Setembro",
-            "Outubro",
-            "Novembro",
-            "Dezembro"
+            "Jan", "Fev", "Mar", "Abr", "Mai", "Jun",
+            "Jul", "Ago", "Set", "Out", "Nov", "Dez",
           ],
           labels: {
             style: {
-              colors: [
-                "#008FFB",
-                "#00E396",
-                "#FEB019",
-                "#FF4560",
-                "#775DD0",
-                "#546E7A",
-                "#26a69a",
-                "#D10CE8",
-              ],
               fontSize: "12px",
+              colors: "#8c8c8c",
             },
           },
         },
+        yaxis: {
+          labels: {
+            formatter: (val) => `${val}%`,
+            style: {
+              colors: "#8c8c8c",
+            },
+          },
+        },
+        grid: {
+          strokeDashArray: 5,
+          borderColor: "#f0f0f0",
+        },
+        colors: ["#3b82f6"],
       };
 
       const chartBar = new ApexCharts(chartRefBar.current, optionsBar);
       chartBar.render();
 
-      return () => {
-        chartBar.destroy();
-      };
+      return () => chartBar.destroy();
     }
   }, []);
 
@@ -149,34 +118,54 @@ export default function Dashboard() {
   ];
 
   return (
-    <main className="dashboard-container">
-      <Card bordered={false} className="dashboard-card">
-        <Title level={4} className="dashboard-title">Visão geral</Title>
-        <Row gutter={[32, 16]} justify="center" align="middle" className="dashboard-row">
-          {stats.map((stat, index) => (
-            <Col key={index}>
-              <Text type="secondary" style={{ display: "block" }}>
-                {stat.description}
-              </Text>
-              <Text>{stat.label} </Text>
-              <Text strong style={{ color: "#1677ff", fontSize: "16px" }}>
-                {stat.value}
-              </Text>
+    <main className={styles.dashboardContainer}>
+      <div className={styles.gridTop}>
+        <Card className={styles.card}>
+          <Title level={5} className={styles.sectionTitle}>Visão geral</Title>
+          <Row gutter={[16, 8]}>
+            {stats.map((stat, idx) => (
+              <Col key={idx}>
+                <Text type="secondary">{stat.description}</Text>
+                <div>
+                  <Text>{stat.label} </Text>
+                  <Text strong style={{ color: "#3b82f6" }}>{stat.value}</Text>
+                </div>
+              </Col>
+            ))}
+          </Row>
+        </Card>
+
+        <Card className={`${styles.card} ${styles.cardBaia}`}>
+          <Title level={5} className={styles.sectionTitle}>Status das baias</Title>
+          <Row>
+            <Col span={12}>
+              <Text type="secondary">Baias ocupadas</Text>
+              <div><strong>104</strong></div>
+              <Text type="secondary">Limpas</Text>
+              <div>90</div>
+              <Text type="secondary">Sujas</Text>
+              <div>4</div>
             </Col>
-          ))}
-        </Row>
-      </Card>
+            <Col span={12}>
+              <Text type="secondary">Baias disponíveis</Text>
+              <div><strong>20</strong></div>
+              <Text type="secondary">Limpas</Text>
+              <div>30</div>
+              <Text type="secondary">Sujas</Text>
+              <div>19</div>
+            </Col>
+          </Row>
+        </Card>
 
-      {/* Gráfico Radial */}
-      <Card bordered={false} className="dashboard-card radial-card" style={{ alignSelf: "flex-end", marginLeft: "auto", width: "500px" }}>
-        <Title level={4} className="dashboard-title">Status do Hotel</Title>
-        <div id="chartRadial" ref={chartRefRadial}></div>
-      </Card>
+        <Card className={`${styles.card} ${styles.cardRadial}`}>
+          <Title level={5} className={styles.sectionTitle}>Status do Hotel</Title>
+          <div ref={chartRefRadial}></div>
+        </Card>
+      </div>
 
-      {/* Gráfico de Barras */}
-      <Card bordered={false} className="dashboard-card">
-        <Title level={4} className="dashboard-title">Estatisticas de Ocupação.</Title>
-        <div id="chartBar" ref={chartRefBar}></div>
+      <Card className={styles.card}>
+        <Title level={5} className={styles.sectionTitle}>Estatísticas de Ocupação</Title>
+        <div ref={chartRefBar}></div>
       </Card>
     </main>
   );
