@@ -4,7 +4,6 @@ import { useAuth } from "@/app/context/AuthContext";
 import api from "@/utils/axios";
 import { Button, Flex, Form, Input, Modal, Pagination, Table } from "antd";
 import { useEffect, useState } from "react";
-import IMask from "imask";
 import styles from "./clientes.module.css";
 import { IMaskInput } from "react-imask";
 
