@@ -8,8 +8,8 @@ import {
   CalendarOutlined,
   EnvironmentOutlined,
   DollarOutlined,
-  PhoneOutlined
-} from '@ant-design/icons';
+  PhoneOutlined,
+} from "@ant-design/icons";
 import {
   Table,
   Input,
@@ -27,6 +27,7 @@ import {
   Row,
   Col,
   DatePicker,
+  AutoComplete,
 } from "antd";
 import { SearchOutlined, FilterOutlined } from "@ant-design/icons";
 import styles from "./pets.module.css";
@@ -130,7 +131,10 @@ const PetTable = () => {
 
   const handleOk = async () => {
     try {
-      const values =  activeTab === "cadastro" ? await formPet.validateFields() : await formAgendamento.validateFields();
+      const values =
+        activeTab === "cadastro"
+          ? await formPet.validateFields()
+          : await formAgendamento.validateFields();
 
       if (activeTab === "cadastro") {
         const body = {
@@ -246,7 +250,6 @@ const PetTable = () => {
           </Header>
 
           <Layout style={{ background: "transparent" }}>
-        
             <Content>
               {activeTab === "cadastro" ? (
                 <Form form={formPet} layout="vertical">
@@ -282,7 +285,6 @@ const PetTable = () => {
                           format="DD/MM/YYYY"
                           placeholder="Selecione a data"
                           suffixIcon={<CalendarOutlined />}
-                        
                         />
                       </Form.Item>
                     </Col>
@@ -335,7 +337,9 @@ const PetTable = () => {
                       <Form.Item
                         name="clienteId"
                         label="Cliente"
-                        rules={[{ required: true, message: "Selecione um cliente" }]}
+                        rules={[
+                          { required: true, message: "Selecione um cliente" },
+                        ]}
                       >
                         <Select
                           showSearch
@@ -361,11 +365,19 @@ const PetTable = () => {
               ) : (
                 <Form form={formAgendamento} layout="vertical">
                   <Form.Item name="busca" label="Pesquisar por pet">
-                    <Input.Search
-                      placeholder="Buscar por nome do pet"
-                      allowClear
-                      prefix={<SearchOutlined />}
-                    />
+                    <Form.Item name="busca" label="Pesquisar por pet">
+                      <AutoComplete
+                        options={pets.map((pet) => ({
+                          value: pet.nome,
+                        }))}
+                        style={{ width: "100%" }}
+                        placeholder="Buscar por nome do pet"
+                        onSelect={(value) =>
+                          formAgendamento.setFieldsValue({ busca: value })
+                        }
+                        allowClear
+                      />
+                    </Form.Item>
                   </Form.Item>
 
                   <Row gutter={16}>
