@@ -38,6 +38,7 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   const loadUser = () => {
     const user = localStorage.getItem("user");
     if (user) {
+      console.log("user", user);
       setUser(JSON.parse(user));
     }
   }
