@@ -11,9 +11,12 @@ import {
 import { usePathname, useRouter } from "next/navigation";
 import Logo from "@/assets/imgs/logo.png";
 import Image from "next/image";
+import styles from "./layout.module.css";
+import { useState } from "react";
 const { Sider, Content } = Layout;
 
 export default function HomeLayout({ children }) {
+  const [collapsed, setCollapsed] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
 
@@ -22,11 +25,10 @@ export default function HomeLayout({ children }) {
   };
 
   return (
-    <Layout style={{ minHeight: "100vh" }}>
-      {/* Menu lateral (Sider) */}
-      <Sider style={{ background: "#fff" }}>
+    <Layout className={styles.layoutContainer}>
+      <Sider breakpoint="md" className={styles.sidebar} collapsed={collapsed} onCollapse={value => setCollapsed(value)} collapsedWidth="70">
         <div style={{ padding:'10px'}}>
-          <Image src={Logo} alt="Logo" width={196} height={40} />
+          <Image className={styles.img} src={Logo} alt="Logo" width={196} height={40} />
         </div>
         <Menu
           onClick={handleMenuClick}
@@ -56,10 +58,10 @@ export default function HomeLayout({ children }) {
         </Menu>
       </Sider>
 
-      {/* Área principal de conteúdo */}
-      <Layout>
+      <Layout className={styles.contentContainer}>
         <Content>{children}</Content>
       </Layout>
+
     </Layout>
   );
 }

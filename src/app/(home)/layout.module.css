@@ -1,0 +1,13 @@
+
+  .sidebar {
+    background: #fff;
+    width: 250px;
+    transition: all 0.3s ease;
+  }
+
+  @media (max-width: 768px) {
+      .img {
+          clip-path: inset(0 80% 0 0);
+      }
+  }
+
