@@ -7,6 +7,49 @@
   gap: 2rem;
 }
 
+
+.card {
+  flex: 1 1 calc(50% - 1rem);
+  max-width: 100%;
+}
+
+@media (max-width: 768px) {
+  .gridTop {
+    flex-direction: column;
+    align-items: center; /* Centraliza os cards */
+  }
+}
+
+
+
+.cardVisaoGeral {
+  order: -1; /* Faz ele subir quando empilhar */
+  flex: 1 1 100%;
+}
+
+
+.cardBaia {
+  flex: 2;
+  min-width: 280px;
+}
+
+.cardRadial {
+  flex: 2;
+  min-width: 280px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+}
+
+
+
+.sectionTitle {
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+  color: #1f1f1f;
+}
+
 .gridTop {
   display: flex;
   gap: 1.5rem;
@@ -14,27 +57,40 @@
   flex-wrap: wrap;
 }
 
-.card {
-  background-color: #fff;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
-  padding: 1.5rem;
-  flex: 1;
-}
+@media (max-width: 768px) {
+  .gridTop {
+    flex-direction: column;
+  }
 
-.cardBaia {
-  max-width: 320px;
-}
+  .card {
+    flex: 1 1 100%;
+  }
 
-.cardRadial {
-  max-width: 320px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  .cardBaia,
+  .cardRadial,
+  .cardVisaoGeral {
+    max-width: 100%;
+    width: 100%;
+  }
 }
+@media (max-width: 480px) {
+  .dashboardContainer {
+    padding: 1rem;
+  }
 
-.sectionTitle {
-  margin-bottom: 1.5rem;
-  font-weight: 600;
-  color: #1f1f1f;
+  .sectionTitle {
+    font-size: 16px;
+    text-align: center;
+  }
+
+  .card {
+    padding: 1rem;
+    width: 100%;
+  }
+
+  .cardBaia,
+  .cardRadial,
+  .cardVisaoGeral {
+    width: 100%;
+  }
 }

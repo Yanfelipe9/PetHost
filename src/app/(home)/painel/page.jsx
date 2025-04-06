@@ -120,46 +120,46 @@ export default function Dashboard() {
   return (
     <main className={styles.dashboardContainer}>
       <div className={styles.gridTop}>
-        <Card className={styles.card}>
-          <Title level={5} className={styles.sectionTitle}>Visão geral</Title>
+        <Card className={`${styles.card} ${styles.cardVisaoGeral}`}>
+          <Title level={5} style={{fontSize: "20px"}}className={styles.sectionTitle}>Visão geral</Title>
           <Row gutter={[16, 8]}>
             {stats.map((stat, idx) => (
-              <Col key={idx}>
-                <Text type="secondary">{stat.description}</Text>
-                <div>
-                  <Text>{stat.label} </Text>
-                  <Text strong style={{ color: "#3b82f6" }}>{stat.value}</Text>
-                </div>
-              </Col>
+              <Col key={idx} xs={24} sm={12} md={8} lg={6} xl={4}>
+              <Text type="secondary" style={{ fontSize: "12px" }}>{stat.description}</Text>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <Text style={{ fontSize: "14px" }}>{stat.label}</Text>
+                <Text strong style={{ color: "#3b82f6", fontSize: "22px" }}>{stat.value}</Text>
+              </div>
+            </Col>                     
             ))}
           </Row>
         </Card>
 
         <Card className={`${styles.card} ${styles.cardBaia}`}>
-          <Title level={5} className={styles.sectionTitle}>Status das baias</Title>
+          <Title level={5} style={{fontSize: "20px"}} className={styles.sectionTitle}>Status das baias</Title>
           <Row>
             <Col span={12}>
-              <Text type="secondary">Baias ocupadas</Text>
+              <Text type="secondary" style={{fontSize: "16px"}}>Baias ocupadas</Text>
               <div><strong>104</strong></div>
-              <Text type="secondary">Limpas</Text>
+              <Text type="secondary" style={{fontSize: "16px"}}>Limpas</Text>
               <div>90</div>
-              <Text type="secondary">Sujas</Text>
+              <Text type="secondary" style={{fontSize: "16px"}}>Sujas</Text>
               <div>4</div>
             </Col>
             <Col span={12}>
-              <Text type="secondary">Baias disponíveis</Text>
+              <Text type="secondary" style={{fontSize: "16px"}}>Baias disponíveis</Text>
               <div><strong>20</strong></div>
-              <Text type="secondary">Limpas</Text>
+              <Text type="secondary" style={{fontSize: "16px"}}>Limpas</Text>
               <div>30</div>
-              <Text type="secondary">Sujas</Text>
+              <Text type="secondary" style={{fontSize: "16px"}}>Sujas</Text>
               <div>19</div>
             </Col>
           </Row>
         </Card>
 
         <Card className={`${styles.card} ${styles.cardRadial}`}>
-          <Title level={5} className={styles.sectionTitle}>Status do Hotel</Title>
-          <div ref={chartRefRadial}></div>
+          <Title level={5} style={{fontSize: "20px"}} className={styles.sectionTitle}>Status do Hotel</Title>
+          <div ref={chartRefRadial}/>
         </Card>
       </div>
 
