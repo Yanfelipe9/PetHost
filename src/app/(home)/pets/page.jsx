@@ -115,17 +115,21 @@ const PetTable = () => {
   };
 
   const showModal = () => {
+    fetchClientes();
+    formPet.resetFields();
+    formAgendamento.resetFields();
     setIsModalOpen(true);
   };
 
   const handleOk = async () => {
     try {
+      debugger;
       const values =
         activeTab === "cadastro"
           ? await formPet.validateFields()
           : await formAgendamento.validateFields();
 
-          console.log("Valores do formulário:", values);
+      console.log("Valores do formulário:", values);
       if (activeTab === "cadastro") {
         const body = {
           nome: values.nome,
@@ -133,10 +137,14 @@ const PetTable = () => {
           racaPet: values.racaPet,
           observacoes: values.observacoes,
           dtNascimento: values.dtNascimento.format("YYYY-MM-DD"),
-          clienteId: values.clienteId
+          clienteId: values.clienteId,
         };
 
         const response = await api.post("/pets", body);
+        if (response.status === 201) {
+          console.log("Pet cadastrado com sucesso:", response.data);
+          formPet.resetFields();
+        }
         const clienteSelecionado = clientes.find(
           (cliente) => cliente.id === values.clienteId
         );
@@ -148,13 +156,14 @@ const PetTable = () => {
         };
 
         setPets((prevPets) => [...prevPets, novoPetComDono]);
+        setIsModalOpen(false);
       } else if (activeTab === "agendamento") {
         console.log("Agendamento:", values);
         // Aqui você pode colocar a lógica de envio para a API de agendamento
       }
 
-      setIsModalOpen(false);
-      form.resetFields();
+      // setIsModalOpen(false);
+      // form.resetFields();
     } catch (error) {
       console.error("Erro ao salvar:", error);
     }
@@ -169,7 +178,11 @@ const PetTable = () => {
     { title: "Nome do Pet", dataIndex: "nome", key: "nome" },
     { title: "Raça do Pet", dataIndex: "racaPet", key: "racaPet" },
     { title: "Nome do Dono", dataIndex: "clienteNome", key: "clienteNome" },
-    {title: "Data de Nascimento", dataIndex: "dtNascimento", key: "dtNascimento"},
+    {
+      title: "Data de Nascimento",
+      dataIndex: "dtNascimento",
+      key: "dtNascimento",
+    },
     {
       title: "Número do Dono",
       dataIndex: "clienteTelefone",
@@ -177,6 +190,15 @@ const PetTable = () => {
     },
     { title: "Observações", dataIndex: "observacoes", key: "observacoes" },
   ];
+
+  const fetchClientes = async () => {
+    try {
+      const response = await api.get("/clientes/user/" + user?.userId);
+      setClientes(response.data);
+    } catch (error) {
+      console.error("Erro ao buscar clientes:", error);
+    }
+  };
 
   return (
     <div style={{ padding: 20 }}>
@@ -354,28 +376,40 @@ const PetTable = () => {
                 </Form>
               ) : (
                 <Form form={formAgendamento} layout="vertical">
-                  <Form.Item name="busca" label="Pesquisar por pet">
-                    <Form.Item name="busca" label="Pesquisar por pet">
-                      <AutoComplete
-                        options={pets.map((pet) => ({
-                          value: pet.nome,
-                        }))}
-                        style={{ width: "100%" }}
-                        placeholder="Buscar por nome do pet"
-                        onSelect={(value) =>
-                          formAgendamento.setFieldsValue({ busca: value })
-                        }
-                        allowClear
-                      />
-                    </Form.Item>
+                  <Form.Item
+                    name="busca"
+                    rules={[
+                      { required: true, message: "Informe o nome do pet" },
+                    ]}
+                    label="Pesquisar por pet"
+                  >
+                    <AutoComplete
+                      options={pets.map((pet) => ({
+                        value: pet.nome,
+                      }))}
+                      style={{ width: "100%" }}
+                      placeholder="Buscar por nome do pet"
+                      filterOption={(inputValue, option) =>
+                        option.value
+                          .toLowerCase()
+                          .includes(inputValue.toLowerCase())
+                      } // Filtra as opções com base no texto digitado
+                      onSelect={
+                        (value) =>
+                          formAgendamento.setFieldsValue({ busca: value }) // Atualiza o valor no formulário
+                      }
+                      allowClear={true} // Permite limpar o campo de busca
+                    />
                   </Form.Item>
 
                   <Row gutter={16}>
                     <Col span={12}>
                       <Form.Item name="periodo" label="Período de estadia">
-                        <Input
-                          placeholder="01/04/2025 a 05/04/2025"
-                          prefix={<CalendarOutlined />}
+                        <DatePicker.RangePicker
+                          style={{ width: "100%" }}
+                          format="DD/MM/YYYY"
+                          placeholder={["Data de início", "Data de término"]}
+                          suffixIcon={<CalendarOutlined />}
                         />
                       </Form.Item>
                     </Col>
