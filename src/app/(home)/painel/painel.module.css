@@ -36,11 +36,9 @@
 .cardRadial {
   flex: 2;
   min-width: 280px;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
   width: 100%;
 }
+
 
 
 
@@ -66,14 +64,17 @@
     flex: 1 1 100%;
   }
 
+  .cardRadial {
+    display: block;
+  }
+  
   .cardBaia,
-  .cardRadial,
   .cardVisaoGeral {
     max-width: 100%;
     width: 100%;
   }
 }
-@media (max-width: 480px) {
+@media (max-width: 400px) {
   .dashboardContainer {
     padding: 1rem;
   }
@@ -87,7 +88,6 @@
     padding: 1rem;
     width: 100%;
   }
-
   .cardBaia,
   .cardRadial,
   .cardVisaoGeral {

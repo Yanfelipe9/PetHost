@@ -122,9 +122,9 @@ export default function Dashboard() {
       <div className={styles.gridTop}>
         <Card className={`${styles.card} ${styles.cardVisaoGeral}`}>
           <Title level={5} style={{fontSize: "20px"}}className={styles.sectionTitle}>Visão geral</Title>
-          <Row gutter={[16, 8]}>
+          <Row gutter={[24, 24]} wrap>
             {stats.map((stat, idx) => (
-              <Col key={idx} xs={24} sm={12} md={8} lg={6} xl={4}>
+              <Col key={idx} xs={24} sm={12} md={8} lg={6} xl={4} style={{ marginBottom: 16 }}>
               <Text type="secondary" style={{ fontSize: "12px" }}>{stat.description}</Text>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <Text style={{ fontSize: "14px" }}>{stat.label}</Text>
@@ -159,7 +159,19 @@ export default function Dashboard() {
 
         <Card className={`${styles.card} ${styles.cardRadial}`}>
           <Title level={5} style={{fontSize: "20px"}} className={styles.sectionTitle}>Status do Hotel</Title>
-          <div ref={chartRefRadial}/>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "1rem", justifyContent: "center", alignItems: "center" }}>
+          <div ref={chartRefRadial} style={{ flex: 1, minWidth: "200px", maxWidth: "300px", width: "100%" }} />
+            <div style={{ display: "flex", flexDirection: "column", gap: "8px", fontSize: "14px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                <span style={{ width: "10px", height: "10px", backgroundColor: "#3b82f6", borderRadius: "50%" }}></span>
+                <span style={{ color: "#6b7280" }}>Completo</span>
+              </div>
+              <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                <span style={{ width: "10px", height: "10px", backgroundColor: "#e5e7eb", borderRadius: "50%" }}></span>
+                <span style={{ color: "#6b7280" }}>Ainda a completar</span>
+              </div>
+            </div>
+          </div>
         </Card>
       </div>
 
