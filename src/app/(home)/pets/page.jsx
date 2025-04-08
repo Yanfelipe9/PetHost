@@ -8,8 +8,8 @@ import {
   CalendarOutlined,
   EnvironmentOutlined,
   DollarOutlined,
-  PhoneOutlined
-} from '@ant-design/icons';
+  PhoneOutlined,
+} from "@ant-design/icons";
 import {
   Table,
   Input,
@@ -27,6 +27,7 @@ import {
   Row,
   Col,
   DatePicker,
+  AutoComplete,
 } from "antd";
 import { SearchOutlined, FilterOutlined } from "@ant-design/icons";
 import styles from "./pets.module.css";
@@ -34,7 +35,8 @@ import Image from "next/image";
 import imgPet from "./pngtree-dog-logo-design-vector-icon-png-image_1824202 5.png";
 import api from "@/utils/axios";
 import { useAuth } from "@/app/context/AuthContext";
-import React, { useEffect, useState } from "react";
+import React, { use, useEffect, useState } from "react";
+import { title } from "process";
 
 const { Header, Footer, Sider, Content } = Layout;
 const { TabPane } = Tabs;
@@ -85,40 +87,28 @@ const PetTable = () => {
   useEffect(() => {
     if (!user?.userId) return;
 
-    const fetchClientesComPets = async () => {
-      try {
-        const response = await api.get(`/clientes/user/${user.userId}`);
-        const clientesComPets = response.data;
-
-        const petsComDono = clientesComPets.flatMap((cliente) => {
-          return cliente.pets.map((pet) => ({
-            ...pet,
-            clienteNome: cliente.nome,
-            clienteTelefone: cliente.telefone,
-          }));
-        });
-
-        setPets(petsComDono);
-      } catch (error) {
-        console.error("Erro ao buscar clientes e pets:", error);
-      }
+    const fetchPetsByUser = async (userId) => {
+      if (!userId) return null; 
+      const response = await api.get(`/pets?userId=${userId}`); 
+      
+      setPets(response.data);
     };
 
-    fetchClientesComPets();
-  }, [user?.userId]);
+    fetchPetsByUser(user.userId);
+  }, []);
 
-  useEffect(() => {
-    const fetchClientes = async () => {
-      try {
-        const response = await api.get("/clientes/user/" + user?.userId);
-        setClientes(response.data);
-      } catch (error) {
-        console.error("Erro ao buscar clientes:", error);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchClientes = async () => {
+  //     try {
+  //       const response = await api.get("/clientes/user/" + user?.userId);
+  //       setClientes(response.data);
+  //     } catch (error) {
+  //       console.error("Erro ao buscar clientes:", error);
+  //     }
+  //   };
 
-    fetchClientes();
-  }, [user?.userId]);
+  //   fetchClientes();
+  // }, [user?.userId]);
 
   const onChange = (e) => {
     setValue(e.target.value);
@@ -130,17 +120,20 @@ const PetTable = () => {
 
   const handleOk = async () => {
     try {
-      const values =  activeTab === "cadastro" ? await formPet.validateFields() : await formAgendamento.validateFields();
+      const values =
+        activeTab === "cadastro"
+          ? await formPet.validateFields()
+          : await formAgendamento.validateFields();
 
+          console.log("Valores do formulário:", values);
       if (activeTab === "cadastro") {
         const body = {
           nome: values.nome,
           sexo: values.sexo,
           racaPet: values.racaPet,
           observacoes: values.observacoes,
-          cliente: {
-            id: values.clienteId,
-          },
+          dtNascimento: values.dtNascimento.format("YYYY-MM-DD"),
+          clienteId: values.clienteId
         };
 
         const response = await api.post("/pets", body);
@@ -176,6 +169,7 @@ const PetTable = () => {
     { title: "Nome do Pet", dataIndex: "nome", key: "nome" },
     { title: "Raça do Pet", dataIndex: "racaPet", key: "racaPet" },
     { title: "Nome do Dono", dataIndex: "clienteNome", key: "clienteNome" },
+    {title: "Data de Nascimento", dataIndex: "dtNascimento", key: "dtNascimento"},
     {
       title: "Número do Dono",
       dataIndex: "clienteTelefone",
@@ -246,7 +240,6 @@ const PetTable = () => {
           </Header>
 
           <Layout style={{ background: "transparent" }}>
-        
             <Content>
               {activeTab === "cadastro" ? (
                 <Form form={formPet} layout="vertical">
@@ -282,7 +275,6 @@ const PetTable = () => {
                           format="DD/MM/YYYY"
                           placeholder="Selecione a data"
                           suffixIcon={<CalendarOutlined />}
-                        
                         />
                       </Form.Item>
                     </Col>
@@ -335,7 +327,9 @@ const PetTable = () => {
                       <Form.Item
                         name="clienteId"
                         label="Cliente"
-                        rules={[{ required: true, message: "Selecione um cliente" }]}
+                        rules={[
+                          { required: true, message: "Selecione um cliente" },
+                        ]}
                       >
                         <Select
                           showSearch
@@ -361,11 +355,19 @@ const PetTable = () => {
               ) : (
                 <Form form={formAgendamento} layout="vertical">
                   <Form.Item name="busca" label="Pesquisar por pet">
-                    <Input.Search
-                      placeholder="Buscar por nome do pet"
-                      allowClear
-                      prefix={<SearchOutlined />}
-                    />
+                    <Form.Item name="busca" label="Pesquisar por pet">
+                      <AutoComplete
+                        options={pets.map((pet) => ({
+                          value: pet.nome,
+                        }))}
+                        style={{ width: "100%" }}
+                        placeholder="Buscar por nome do pet"
+                        onSelect={(value) =>
+                          formAgendamento.setFieldsValue({ busca: value })
+                        }
+                        allowClear
+                      />
+                    </Form.Item>
                   </Form.Item>
 
                   <Row gutter={16}>
