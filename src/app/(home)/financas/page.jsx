@@ -76,7 +76,7 @@ const FinanceiroPage = () => {
   ];
 
   return (
-    <div style={{ padding: 20 }}>
+    <div className={styles.container} style={{ padding: 20 }}>
       <Tabs activeKey={activeTab} onChange={(key) => setActiveTab(key)} style={{ marginBottom: 16 }}>
         <TabPane tab="Painel" key="painel">
         </TabPane>
