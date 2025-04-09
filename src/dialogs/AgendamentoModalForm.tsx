@@ -1,4 +1,5 @@
 "use client";
+import { PetInfoInterface } from "@/app/(home)/pets/page";
 import {
   CalendarOutlined,
   EnvironmentOutlined,
@@ -17,7 +18,7 @@ import {
 
 interface AgendamentoFormProps {
   form: any;
-  pets: { nome: string }[];
+  pets: PetInfoInterface[];
 }
 
 export default function AgendamentoFormModalForm({ form, pets }: AgendamentoFormProps) {
@@ -30,7 +31,7 @@ export default function AgendamentoFormModalForm({ form, pets }: AgendamentoForm
       >
         <AutoComplete
           options={pets.map((pet) => ({
-            value: pet.nome,
+            value: pet.nome + " - " + pet.racaPet,
           }))}
           style={{ width: "100%" }}
           placeholder="Buscar por nome do pet"

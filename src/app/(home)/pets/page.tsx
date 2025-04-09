@@ -26,38 +26,21 @@ import AgendamentoFormModalForm from "@/dialogs/AgendamentoModalForm";
 const { Header, Footer, Sider, Content } = Layout;
 const { TabPane } = Tabs;
 
-const headerStyle = {
-  textAlign: "center",
-  height: 64,
-  paddingInline: 48,
-  lineHeight: "64px",
-  backgroundColor: "#ffffff",
-};
-const contentStyle = {
-  textAlign: "center",
-  minHeight: 120,
-  lineHeight: "120px",
-  backgroundColor: "#ffffff",
-};
-const siderStyle = {
-  textAlign: "center",
-  lineHeight: "120px",
-  backgroundColor: "#ffffff",
-};
-const footerStyle = {
-  textAlign: "center",
-  backgroundColor: "#ffffff",
-};
-const layoutStyle = {
-  borderRadius: 8,
-  overflow: "hidden",
-  width: "calc(100% - 8px)",
-  maxWidth: "calc(100% - 8px)",
-};
+
+export interface PetInfoInterface {
+  id:           number;
+  nome:         string;
+  sexo:         string;
+  racaPet:      string;
+  observacoes:  null;
+  dtNascimento: Date;
+  clienteId:    number;
+  nomeDono:     string;
+}
+
 
 const PetTable = () => {
   const [searchText, setSearchText] = useState("");
-  const [position, setPosition] = useState("start");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("cadastro");
 
@@ -65,7 +48,7 @@ const PetTable = () => {
   const [formAgendamento] = Form.useForm();
 
   const { user } = useAuth();
-  const [pets, setPets] = useState([]);
+  const [pets, setPets] = useState<PetInfoInterface[]>([]);
   const [clientes, setClientes] = useState([]);
   const [value, setValue] = useState("");
 
@@ -82,22 +65,6 @@ const PetTable = () => {
     fetchPetsByUser(user.userId);
   }, []);
 
-  // useEffect(() => {
-  //   const fetchClientes = async () => {
-  //     try {
-  //       const response = await api.get("/clientes/user/" + user?.userId);
-  //       setClientes(response.data);
-  //     } catch (error) {
-  //       console.error("Erro ao buscar clientes:", error);
-  //     }
-  //   };
-
-  //   fetchClientes();
-  // }, [user?.userId]);
-
-  const onChange = (e) => {
-    setValue(e.target.value);
-  };
 
   const showModal = () => {
     fetchClientes();
@@ -108,7 +75,6 @@ const PetTable = () => {
 
   const handleOk = async () => {
     try {
-      debugger;
       const values =
         activeTab === "cadastro"
           ? await formPet.validateFields()
@@ -199,7 +165,7 @@ const PetTable = () => {
             style={{ width: 300 }}
             prefix={<SearchOutlined />}
           />
-          <Button icon={<FilterOutlined />} iconPosition={position}>
+          <Button icon={<FilterOutlined />} iconPosition={"start"}>
             Filtrar
           </Button>
         </Space>
