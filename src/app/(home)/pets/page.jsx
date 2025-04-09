@@ -1,15 +1,5 @@
 "use client";
-import {
-  UserOutlined,
-  ManOutlined,
-  WomanOutlined,
-  IdcardOutlined,
-  InfoCircleOutlined,
-  CalendarOutlined,
-  EnvironmentOutlined,
-  DollarOutlined,
-  PhoneOutlined,
-} from "@ant-design/icons";
+
 import {
   Table,
   Input,
@@ -24,19 +14,14 @@ import {
   Select,
   Pagination,
   Tabs,
-  Row,
-  Col,
-  DatePicker,
-  AutoComplete,
 } from "antd";
 import { SearchOutlined, FilterOutlined } from "@ant-design/icons";
 import styles from "./pets.module.css";
-import Image from "next/image";
-import imgPet from "./pngtree-dog-logo-design-vector-icon-png-image_1824202 5.png";
 import api from "@/utils/axios";
 import { useAuth } from "@/app/context/AuthContext";
 import React, { use, useEffect, useState } from "react";
-import { title } from "process";
+import PetFormModalForm from "@/dialogs/PetFormModalForm";
+import AgendamentoFormModalForm from "@/dialogs/AgendamentoModalForm";
 
 const { Header, Footer, Sider, Content } = Layout;
 const { TabPane } = Tabs;
@@ -88,9 +73,9 @@ const PetTable = () => {
     if (!user?.userId) return;
 
     const fetchPetsByUser = async (userId) => {
-      if (!userId) return null; 
-      const response = await api.get(`/pets?userId=${userId}`); 
-      
+      if (!userId) return null;
+      const response = await api.get(`/pets?userId=${userId}`);
+
       setPets(response.data);
     };
 
@@ -243,239 +228,46 @@ const PetTable = () => {
         width={700}
         footer={null} // Custom footer (removido por enquanto, pode ser adicionado depois)
       >
-        <Tabs activeKey={activeTab} onChange={setActiveTab}>
-          <Tabs.TabPane tab="Cadastro Pets" key="cadastro" />
-          <Tabs.TabPane tab="Agendamento" key="agendamento" />
+        <Tabs
+          activeKey={activeTab}
+          onChange={setActiveTab}
+          destroyInactiveTabPane={false}
+        >
+          <Tabs.TabPane
+            tab="Cadastro Pets"
+            key="cadastro"
+            children={
+              <>
+                <PetFormModalForm form={formPet} clientes={clientes} />
+              </>
+            }
+          />
+          <Tabs.TabPane
+            tab="Agendamento"
+            key="agendamento"
+            children={
+              <>
+                <AgendamentoFormModalForm form={formAgendamento} pets={pets} />
+              </>
+            }
+          />
         </Tabs>
 
-        <Layout style={{ background: "#fff", padding: 24, borderRadius: 8 }}>
-          <Header
-            style={{
-              fontSize: 24,
-              fontWeight: "bold",
-              background: "transparent",
-              padding: 0,
-              marginBottom: 24,
-            }}
-          >
-            {activeTab === "cadastro" ? "Cadastrar Pet" : "Agendamento"}
-          </Header>
-
-          <Layout style={{ background: "transparent" }}>
-            <Content>
-              {activeTab === "cadastro" ? (
-                <Form form={formPet} layout="vertical">
-                  <Row gutter={16}>
-                    <Col span={12}>
-                      <Form.Item
-                        name="nome"
-                        label="Nome do Pet"
-                        rules={[
-                          { required: true, message: "Informe o nome do pet" },
-                        ]}
-                      >
-                        <Input
-                          placeholder="Ex: Rex"
-                          prefix={<UserOutlined />}
-                        />
-                      </Form.Item>
-                    </Col>
-
-                    <Col span={12}>
-                      <Form.Item
-                        name="dtNascimento"
-                        label="Data de Nascimento"
-                        rules={[
-                          {
-                            required: true,
-                            message: "Informe a data de nascimento",
-                          },
-                        ]}
-                      >
-                        <DatePicker
-                          style={{ width: "100%" }}
-                          format="DD/MM/YYYY"
-                          placeholder="Selecione a data"
-                          suffixIcon={<CalendarOutlined />}
-                        />
-                      </Form.Item>
-                    </Col>
-                  </Row>
-                  <Row gutter={16}>
-                    <Col span={12}>
-                      <Form.Item
-                        name="sexo"
-                        label="Sexo"
-                        rules={[{ required: true, message: "Informe o sexo" }]}
-                      >
-                        <Radio.Group
-                          options={[
-                            {
-                              value: "macho",
-                              label: (
-                                <>
-                                  <ManOutlined /> Macho
-                                </>
-                              ),
-                            },
-                            {
-                              value: "femea",
-                              label: (
-                                <>
-                                  <WomanOutlined /> Fêmea
-                                </>
-                              ),
-                            },
-                          ]}
-                        />
-                      </Form.Item>
-                    </Col>
-                  </Row>
-
-                  <Row gutter={16}>
-                    <Col span={12}>
-                      <Form.Item
-                        name="racaPet"
-                        label="Raça/Características do Pet"
-                        rules={[{ required: true, message: "Informe a raça" }]}
-                      >
-                        <Input
-                          placeholder="Ex: Golden Retriever"
-                          prefix={<InfoCircleOutlined />}
-                        />
-                      </Form.Item>
-                    </Col>
-                    <Col span={12}>
-                      <Form.Item
-                        name="clienteId"
-                        label="Cliente"
-                        rules={[
-                          { required: true, message: "Selecione um cliente" },
-                        ]}
-                      >
-                        <Select
-                          showSearch
-                          placeholder="Selecione um Cliente"
-                          optionFilterProp="label"
-                          options={clientes.map((cliente) => ({
-                            value: cliente.id,
-                            label: `${cliente.nome} - ${cliente.telefone}`,
-                          }))}
-                        />
-                      </Form.Item>
-                    </Col>
-                  </Row>
-
-                  <Form.Item name="observacoes" label="Observações">
-                    <Input.TextArea
-                      rows={4}
-                      placeholder="Informe cuidados especiais, medicamentos, etc."
-                      prefix={<InfoCircleOutlined />}
-                    />
-                  </Form.Item>
-                </Form>
-              ) : (
-                <Form form={formAgendamento} layout="vertical">
-                  <Form.Item
-                    name="busca"
-                    rules={[
-                      { required: true, message: "Informe o nome do pet" },
-                    ]}
-                    label="Pesquisar por pet"
-                  >
-                    <AutoComplete
-                      options={pets.map((pet) => ({
-                        value: pet.nome,
-                      }))}
-                      style={{ width: "100%" }}
-                      placeholder="Buscar por nome do pet"
-                      filterOption={(inputValue, option) =>
-                        option.value
-                          .toLowerCase()
-                          .includes(inputValue.toLowerCase())
-                      } // Filtra as opções com base no texto digitado
-                      onSelect={
-                        (value) =>
-                          formAgendamento.setFieldsValue({ busca: value }) // Atualiza o valor no formulário
-                      }
-                      allowClear={true} // Permite limpar o campo de busca
-                    />
-                  </Form.Item>
-
-                  <Row gutter={16}>
-                    <Col span={12}>
-                      <Form.Item name="periodo" label="Período de estadia">
-                        <DatePicker.RangePicker
-                          style={{ width: "100%" }}
-                          format="DD/MM/YYYY"
-                          placeholder={["Data de início", "Data de término"]}
-                          suffixIcon={<CalendarOutlined />}
-                        />
-                      </Form.Item>
-                    </Col>
-                    <Col span={12}>
-                      <Form.Item name="compartimento" label="Compartimento">
-                        <Input
-                          placeholder="Ex: Canil 3"
-                          prefix={<EnvironmentOutlined />}
-                        />
-                      </Form.Item>
-                    </Col>
-                  </Row>
-
-                  <Row gutter={16}>
-                    <Col span={12}>
-                      <Form.Item name="valor" label="Valor">
-                        <Input
-                          type="number"
-                          prefix="R$"
-                          addonBefore={<DollarOutlined />}
-                          placeholder="Ex: 150,00"
-                        />
-                      </Form.Item>
-                    </Col>
-                    <Col span={12}>
-                      <Form.Item name="pagamento" label="Forma de pagamento">
-                        <Select
-                          placeholder="Selecione"
-                          options={[
-                            { value: "dinheiro", label: "Dinheiro" },
-                            { value: "cartao", label: "Cartão" },
-                            { value: "pix", label: "Pix" },
-                          ]}
-                        />
-                      </Form.Item>
-                    </Col>
-                  </Row>
-
-                  <Form.Item name="obsAgendamento" label="Observações">
-                    <Input.TextArea
-                      rows={3}
-                      placeholder="Informações adicionais sobre o agendamento"
-                      prefix={<InfoCircleOutlined />}
-                    />
-                  </Form.Item>
-                </Form>
-              )}
-            </Content>
-          </Layout>
-
-          <Footer
-            style={{
-              background: "transparent",
-              paddingTop: 24,
-              display: "flex",
-              justifyContent: "flex-end",
-            }}
-          >
-            <Button onClick={handleCancel} style={{ marginRight: 12 }}>
-              Cancelar
-            </Button>
-            <Button type="primary" onClick={handleOk}>
-              Cadastrar
-            </Button>
-          </Footer>
-        </Layout>
+        <Footer
+          style={{
+            background: "transparent",
+            paddingTop: 24,
+            display: "flex",
+            justifyContent: "flex-end",
+          }}
+        >
+          <Button onClick={handleCancel} style={{ marginRight: 12 }}>
+            Cancelar
+          </Button>
+          <Button type="primary" onClick={handleOk}>
+            Cadastrar
+          </Button>
+        </Footer>
       </Modal>
     </div>
   );
