@@ -122,9 +122,21 @@ export default function Dashboard() {
       <div className={styles.gridTop}>
         <Card className={`${styles.card} ${styles.cardVisaoGeral}`}>
           <Title level={5} style={{fontSize: "20px"}}className={styles.sectionTitle}>Visão geral</Title>
-          <Row gutter={[24, 24]} wrap>
+          <Row gutter={{
+            xs: [8, 8],
+            md: [24, 24],
+          }} wrap>
             {stats.map((stat, idx) => (
-              <Col key={idx} xs={24} sm={12} md={8} lg={6} xl={4} style={{ marginBottom: 16 }}>
+              <Col
+              key={idx}
+              xs={24}
+              sm={12}
+              md={8}
+              lg={6}
+              xl={4}
+              className={styles.statItem}
+            >
+            
               <Text type="secondary" style={{ fontSize: "12px" }}>{stat.description}</Text>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <Text style={{ fontSize: "14px" }}>{stat.label}</Text>

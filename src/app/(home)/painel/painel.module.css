@@ -74,18 +74,22 @@
     width: 100%;
   }
 }
+.statItem {
+  margin-bottom: 16px;
+}
+
 @media (max-width: 400px) {
   .dashboardContainer {
     padding: 1rem;
   }
-
+  .statItem {
+    margin-bottom: 1px; /* Reduzido */
+  }
   .sectionTitle {
     font-size: 16px;
     text-align: center;
   }
-
   .card {
-    padding: 1rem;
     width: 100%;
   }
   .cardBaia,
