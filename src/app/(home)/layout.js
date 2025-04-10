@@ -26,7 +26,7 @@ export default function HomeLayout({ children }) {
 
   return (
     <Layout className={styles.layoutContainer}>
-      <Sider breakpoint="md" className={styles.sidebar} collapsed={collapsed} onCollapse={value => setCollapsed(value)} collapsedWidth="70">
+      <Sider breakpoint="md" style={{backgroundColor:"white"}}className={styles.sidebar} collapsed={collapsed} onCollapse={value => setCollapsed(value)} collapsedWidth="70">
         <div style={{ padding:'10px'}}>
           <Image className={styles.img} src={Logo} alt="Logo" width={196} height={40} />
         </div>
