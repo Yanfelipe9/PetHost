@@ -23,6 +23,7 @@
     "apexcharts": "^4.5.0",
     "axios": "^1.7.9",
     "bcrypt": "^5.1.1",
+    "lodash": "^4.17.21",
     "next": "14.0.4",
     "next-auth": "^4.24.11",
     "react": "^18",

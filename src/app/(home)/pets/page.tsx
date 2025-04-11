@@ -19,9 +19,10 @@ import { SearchOutlined, FilterOutlined } from "@ant-design/icons";
 import styles from "./pets.module.css";
 import api from "@/utils/axios";
 import { useAuth } from "@/app/context/AuthContext";
-import React, { use, useEffect, useState } from "react";
+import React, { use, useCallback, useEffect, useState } from "react";
 import PetFormModalForm from "@/dialogs/PetFormModalForm";
 import AgendamentoFormModalForm from "@/dialogs/AgendamentoModalForm";
+import {debounce} from "lodash";
 
 const { Header, Footer, Sider, Content } = Layout;
 const { TabPane } = Tabs;
@@ -32,7 +33,7 @@ export interface PetInfoInterface {
   nome:         string;
   sexo:         string;
   racaPet:      string;
-  observacoes:  null;
+  observacoes?:  string;
   dtNascimento: Date;
   clienteId:    number;
   nomeDono:     string;
@@ -151,6 +152,31 @@ const PetTable = () => {
     }
   };
 
+  const handleSearch = async (value) => {
+    try {
+      const response =   await api.get(`/pets`,{
+        params: {
+          nome: value,
+          userId: user?.userId,
+        }
+      });
+      setPets(response.data);
+    } catch (error) {
+      console.error("Erro ao buscar pets:", error);
+    }
+  } 
+
+  const debouncedSearch = useCallback(
+    debounce((value) => handleSearch(value), 500), // 500ms de atraso
+    []
+  );
+
+  const onChange = (e) => {
+    const value = e.target.value;
+    setSearchText(value);
+    debouncedSearch(value);
+  };
+
   return (
     <div style={{ padding: 20 }}>
       <Flex
@@ -161,7 +187,7 @@ const PetTable = () => {
         <Space style={{ marginBottom: 16 }}>
           <Input
             placeholder="Pesquisar por Nome do Pet"
-            onChange={(e) => setSearchText(e.target.value)}
+            onChange={onChange}
             style={{ width: 300 }}
             prefix={<SearchOutlined />}
           />
