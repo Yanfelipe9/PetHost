@@ -44,6 +44,7 @@ const PetTable = () => {
   const [searchText, setSearchText] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("cadastro");
+  const [filterSexo, setFilterSexo] = useState(null); 
 
   const [formPet] = Form.useForm();
   const [formAgendamento] = Form.useForm();
@@ -157,6 +158,7 @@ const PetTable = () => {
       const response =   await api.get(`/pets`,{
         params: {
           nome: value,
+          sexo: filterSexo, 
           userId: user?.userId,
         }
       });
@@ -167,15 +169,36 @@ const PetTable = () => {
   } 
 
   const debouncedSearch = useCallback(
-    debounce((value) => handleSearch(value), 500), // 500ms de atraso
+    debounce((value) => handleSearch(value), 500), 
     []
   );
+
+ const handleSearchFilter = async (value) => {
+    try {
+      const response = await api.get(`/pets`, {
+        params: {
+          nome: searchText,
+          sexo: value, 
+          userId: user?.userId,
+        },
+      });
+      setPets(response.data);
+    } catch (error) {
+      console.error("Erro ao buscar pets:", error);
+    }
+  }
 
   const onChange = (e) => {
     const value = e.target.value;
     setSearchText(value);
     debouncedSearch(value);
   };
+
+  const onSexoChange = (value) => {
+  setFilterSexo(value); 
+  handleSearchFilter(value); 
+};
+ 
 
   return (
     <div style={{ padding: 20 }}>
@@ -191,9 +214,17 @@ const PetTable = () => {
             style={{ width: 300 }}
             prefix={<SearchOutlined />}
           />
-          <Button icon={<FilterOutlined />} iconPosition={"start"}>
-            Filtrar
-          </Button>
+        <Select
+          placeholder="Filtrar por Sexo"
+          style={{ width: 150 }}
+          onChange={onSexoChange}
+          allowClear
+          options={[
+            { value: "MACHO", label: "Macho" },
+            { value: "FEMEA", label: "Fêmea" },
+          ]}
+      />
+        
         </Space>
         <Button
           type="primary"
