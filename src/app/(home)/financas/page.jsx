@@ -51,7 +51,25 @@ const FinanceiroPage = () => {
   return (
     <div className={styles.container} style={{ padding: 20 }}>
       <Tabs activeKey={activeTab} onChange={(key) => setActiveTab(key)} style={{ marginBottom: 16 }}>
-        <TabPane tab="Painel" key="painel" />
+        <TabPane tab="Painel" key="painel">
+
+          {/* grafico de barra   */}
+          <Card className={styles.card}>
+            <Title level={5}>Ultimas entradas/saidas</Title>
+            <p>Resumo das despesas de Jan a Dez</p>
+            {/*grafico que vai ser inserido <div ref={chartRefBar}></div> */}
+            <div style={{ display: "flex", gap: "8px", fontSize: "14px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                <span style={{ width: "10px", height: "10px", backgroundColor: "#3b82f6", borderRadius: "50%" }}></span>
+                <span style={{ color: "#6b7280" }}>Entradas</span>
+              </div>
+              <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                <span style={{ width: "10px", height: "10px", backgroundColor: "#e5e7eb", borderRadius: "50%" }}></span>
+                <span style={{ color: "#6b7280" }}>Despesas</span>
+              </div>
+            </div>
+          </Card>
+        </TabPane> 
         <TabPane tab="Finanças" key="financas">
           <Flex justify="space-between" align="flex-start" className={styles.header}>
             <Space style={{ marginBottom: 16 }}>
