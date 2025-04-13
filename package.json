@@ -17,6 +17,9 @@
   "dependencies": {
     "@ant-design/nextjs-registry": "^1.0.2",
     "@auth/prisma-adapter": "^2.5.3",
+    "@fullcalendar/core": "^6.1.17",
+    "@fullcalendar/daygrid": "^6.1.17",
+    "@fullcalendar/react": "^6.1.17",
     "@prisma/client": "^5.20.0",
     "@vercel/blob": "^0.24.0",
     "antd": "^5.24.0",

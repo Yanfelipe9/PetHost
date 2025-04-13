@@ -6,6 +6,8 @@ import styles from './financas.module.css';
 import api from "@/utils/axios";
 import { useAuth } from "@/app/context/AuthContext";
 import ApexCharts from "apexcharts";
+import FullCalendar from '@fullcalendar/react'
+import dayGridPlugin from '@fullcalendar/daygrid' // a plugin!
 
 
 const { TabPane } = Tabs;
@@ -129,6 +131,12 @@ const FinanceiroPage = () => {
           <Card>
             <h3>Despesas</h3>
             <Title>$3120.54</Title>
+          </Card>
+          <Card>
+            <FullCalendar
+              plugins={[ dayGridPlugin ]}
+              initialView="dayGridMonth"
+            />
           </Card>
           {/* Grafico de barra de entradas e despesas */}
           <Card className={styles.card}>
