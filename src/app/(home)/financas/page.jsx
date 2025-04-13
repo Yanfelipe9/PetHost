@@ -54,6 +54,7 @@ const FinanceiroPage = () => {
               type: 'bar',
               height: 350
             },
+            colors: ['rgba(47, 41, 43, 1)', "rgba(0, 122, 255, 1)"], // verde para Entradas, vermelho para Despesas
             plotOptions: {
               bar: {
                 horizontal: false,
@@ -119,25 +120,28 @@ const FinanceiroPage = () => {
     <div className={styles.container} style={{ padding: 20 }}>
       <Tabs activeKey={activeTab} onChange={(key) => setActiveTab(key)} style={{ marginBottom: 16 }}>
         <TabPane tab="Painel" key="painel">
-
-          <Card>
-            <h3>Saldo Liquido</h3>
-            <Title>$3120.54</Title>
-          </Card>
-          <Card>
-            <h3>Entrada</h3>
-            <Title>$3120.54</Title>
-          </Card>
-          <Card>
-            <h3>Despesas</h3>
-            <Title>$3120.54</Title>
-          </Card>
-          <Card>
-            <FullCalendar
-              plugins={[ dayGridPlugin ]}
-              initialView="dayGridMonth"
-            />
-          </Card>
+          <div className={styles.cabecalho}>
+            <Card style={{ width: '30%', background: 'rgba(21, 112, 239, 1)', color: 'white' }}>
+              <h3>Saldo Liquido</h3>
+              <Title style={{  color: 'white' }}>$3120.54</Title>
+            </Card>
+            <div className={styles.entrada_despesas}>
+              <Card style={{background: 'rgba(21, 112, 239, 1)', color: 'white' }}>
+                <h3>Entrada</h3>
+                <Title style={{  color: 'white' }}>$3120.54</Title>
+              </Card >
+              <Card style={{background: 'rgba(21, 112, 239, 1)', color: 'white' }}>
+                <h3>Despesas</h3>
+                <Title style={{  color: 'white' }}>$3120.54</Title>
+              </Card>
+            </div>
+            <Card>
+              <FullCalendar
+                plugins={[ dayGridPlugin ]}
+                initialView="dayGridMonth"
+              />
+            </Card>
+          </div>
           {/* Grafico de barra de entradas e despesas */}
           <Card className={styles.card}>
             <Title level={5}>Últimas entradas/saídas</Title>
