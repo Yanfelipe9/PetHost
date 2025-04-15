@@ -23,6 +23,7 @@ import React, { use, useCallback, useEffect, useState } from "react";
 import PetFormModalForm from "@/dialogs/PetFormModalForm";
 import AgendamentoFormModalForm from "@/dialogs/AgendamentoModalForm";
 import {debounce} from "lodash";
+import { title } from "process";
 
 const { Header, Footer, Sider, Content } = Layout;
 const { TabPane } = Tabs;
@@ -130,7 +131,8 @@ const PetTable = () => {
     { title: "ID do Pet", dataIndex: "id", key: "id" },
     { title: "Nome do Pet", dataIndex: "nome", key: "nome" },
     { title: "Raça do Pet", dataIndex: "racaPet", key: "racaPet" },
-    { title: "Nome do Dono", dataIndex: "clienteNome", key: "clienteNome" },
+    {title: "Sexo", dataIndex: "sexo", key: "sexo"},
+    { title: "Nome do Dono", dataIndex: "nomeDono", key: "nomeDono" },
     {
       title: "Data de Nascimento",
       dataIndex: "dtNascimento",
@@ -155,7 +157,7 @@ const PetTable = () => {
 
   const handleSearch = async (value) => {
     try {
-      const response =   await api.get(`/pets`,{
+      const response =   await api.get(`/pets`, {
         params: {
           nome: value,
           sexo: filterSexo, 
@@ -201,7 +203,7 @@ const PetTable = () => {
  
 
   return (
-    <div style={{ padding: 20 }}>
+    <div  className={styles.container} style={{ padding: 20 }}>
       <Flex
         justify="space-between"
         align="flex-start"
@@ -240,9 +242,12 @@ const PetTable = () => {
         pagination={false}
         rowKey="id"
       />
-      <Flex justify="center" className={styles.paginationContainer}>
-        <Pagination defaultCurrent={1} total={pets.length} />
-      </Flex>
+  
+      <div  className={styles.paginationContainer }>
+        <Flex   justify="center">
+          <Pagination defaultCurrent={1} total={pets.length} />
+        </Flex>
+      </div>
 
       <Modal
         open={isModalOpen}

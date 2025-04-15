@@ -83,9 +83,11 @@ const Clientes = () => {
           rowKey="id"
         />
       </div>
-      <Flex justify="center" className={styles.paginationContainer}>
-        <Pagination defaultCurrent={1} total={clientes.length} />
-      </Flex>
+      <div className={styles.paginationContainer}>
+        <Flex justify="center">
+          <Pagination defaultCurrent={1} total={clientes.length} />
+        </Flex>
+      </div>
       <Modal
         title="Cadastrar Cliente"
         open={isModalOpen}
@@ -100,13 +102,16 @@ const Clientes = () => {
           >
             <Input />
           </Form.Item>
-          <Form.Item name="telefone" label="Telefone" rules={[{ required: true, message: "Digite o telefone" }]}> 
-          <IMaskInput
-    mask="(00) 00000-0000"
-    placeholder="Digite o seu telefone"
-    className={styles.customAntInput} // Apenas usa a classe padrão do Ant Design
-    
-  />
+          <Form.Item
+            name="telefone"
+            label="Telefone"
+            rules={[{ required: true, message: "Digite o telefone" }]}
+          >
+            <IMaskInput
+              mask="(00) 00000-0000"
+              placeholder="Digite o seu telefone"
+              className={styles.customAntInput} // Apenas usa a classe padrão do Ant Design
+            />
           </Form.Item>
         </Form>
       </Modal>
