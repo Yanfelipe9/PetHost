@@ -1,5 +1,6 @@
 .container{
   min-height: 100vh;
+  
 }
 
 .createButton {
@@ -20,3 +21,14 @@
     margin-bottom: 20px;
 }
 
+.cabecalho {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.entrada_despesas {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
