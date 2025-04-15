@@ -8,7 +8,8 @@ import { useAuth } from "@/app/context/AuthContext";
 import ApexCharts from "apexcharts";
 import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid' // a plugin!
-
+import img from '@/assets/imgs/Group 48095478.png'
+import Image from "next/image";
 
 const { TabPane } = Tabs;
 const { Title } = Typography;
@@ -119,20 +120,31 @@ const FinanceiroPage = () => {
   return (
     <div className={styles.container} style={{ padding: 20 }}>
       <Tabs activeKey={activeTab} onChange={(key) => setActiveTab(key)} style={{ marginBottom: 16 }}>
-        <TabPane tab="Painel" key="painel">
+        <TabPane tab="Painel" key="painel" className={styles.tapPanePainel}>
           <div className={styles.cabecalho}>
             <Card style={{ width: '30%', background: 'rgba(21, 112, 239, 1)', color: 'white' }}>
               <h3>Saldo Liquido</h3>
               <Title style={{  color: 'white' }}>$3120.54</Title>
             </Card>
             <div className={styles.entrada_despesas}>
-              <Card style={{background: 'rgba(21, 112, 239, 1)', color: 'white' }}>
-                <h3>Entrada</h3>
-                <Title style={{  color: 'white' }}>$3120.54</Title>
-              </Card >
-              <Card style={{background: 'rgba(21, 112, 239, 1)', color: 'white' }}>
-                <h3>Despesas</h3>
-                <Title style={{  color: 'white' }}>$3120.54</Title>
+              <Card style={{ background: 'rgba(21, 112, 239, 1)', color: 'white', flex: 1}}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+                  <Image src={img} alt="icone" width={50} height={50} />
+                  <div>
+                  <h3 style={{ color: 'white', margin: 0 }}>Entrada</h3>
+                    <Title level={4} style={{ color: 'white', margin: 0 }}>$3120.54</Title>
+                  </div>
+                </div>
+              </Card>
+
+              <Card style={{background: 'rgba(21, 112, 239, 1)', color: 'white' , flex: 1}}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+                  <Image src={img} alt="icone" width={50} height={50} />
+                  <div>
+                    <h3 style={{ color: 'white', margin: 0 }}>Despesas</h3>
+                    <Title level={4} style={{  color: 'white' }}>$3120.54</Title>
+                  </div>
+                </div>
               </Card>
             </div>
             <Card>
@@ -149,6 +161,7 @@ const FinanceiroPage = () => {
             <div ref={chartRef} style={{ minHeight: 350 }} />
           </Card>
         </TabPane>
+
         <TabPane tab="Finanças" key="financas">
           <Flex justify="space-between" align="flex-start" className={styles.header}>
             <Space style={{ marginBottom: 16 }}>
