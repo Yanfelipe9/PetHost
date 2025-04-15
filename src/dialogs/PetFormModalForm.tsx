@@ -53,7 +53,7 @@ export default function PetFormModalForm({ form, clientes }: PetFormProps) {
             <Radio.Group
               options={[
                 {
-                  value: "macho",
+                  value: "MACHO",
                   label: (
                     <>
                       <ManOutlined /> Macho
@@ -61,7 +61,7 @@ export default function PetFormModalForm({ form, clientes }: PetFormProps) {
                   ),
                 },
                 {
-                  value: "femea",
+                  value: "FEMEA",
                   label: (
                     <>
                       <WomanOutlined /> Fêmea

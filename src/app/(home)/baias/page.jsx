@@ -85,7 +85,11 @@ const Baias = () => {
             Filtrar
           </Button>
         </Space>
-        <Button type="primary" onClick={showModal} className={styles.createButton}>
+        <Button
+          type="primary"
+          onClick={showModal}
+          className={styles.createButton}
+        >
           Criar
         </Button>
       </Flex>
@@ -98,15 +102,16 @@ const Baias = () => {
           rowKey="id"
         />
       </div>
-
-      <Flex justify="center" className={styles.paginationContainer}>
-        <Pagination
-          current={currentPage}  // Página atual
-          pageSize={pageSize}  // Número de itens por página
-          total={filteredBaias.length}  // Total de itens
-          onChange={handlePageChange}  // Função chamada ao mudar de página
-        />
-      </Flex>
+      <div className={styles.paginationContainer}>
+        <Flex justify="center" className={styles.paginationContainer}>
+          <Pagination
+            current={currentPage} // Página atual
+            pageSize={pageSize} // Número de itens por página
+            total={filteredBaias.length} // Total de itens
+            onChange={handlePageChange} // Função chamada ao mudar de página
+          />
+        </Flex>
+      </div>
 
       <Modal
         title="Cadastrar Baia"
@@ -115,7 +120,11 @@ const Baias = () => {
         onCancel={handleCancel}
       >
         <Form form={form} layout="vertical">
-          <Form.Item name="descricao" label="Nome da Baia" rules={[{ required: true, message: "Digite o nome da baia" }]}>
+          <Form.Item
+            name="descricao"
+            label="Nome da Baia"
+            rules={[{ required: true, message: "Digite o nome da baia" }]}
+          >
             <Input />
           </Form.Item>
         </Form>
