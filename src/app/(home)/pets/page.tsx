@@ -152,7 +152,7 @@ const PetTable = () => {
   };
 
   return (
-    <div style={{ padding: 20 }}>
+    <div className={styles.container} style={{ padding: 20 }}>
       <Flex
         justify="space-between"
         align="flex-start"
