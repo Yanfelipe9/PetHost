@@ -137,6 +137,13 @@ const PetTable = () => {
       title: "Data de Nascimento",
       dataIndex: "dtNascimento",
       key: "dtNascimento",
+      render: (text : string) => {
+        const date = text.split("-")
+        const dia = date[2].padStart(2, "0");
+        const mes = date[1].padStart(2, "0");
+        const ano = date[0];
+        return `${dia}/${mes}/${ano}`;
+      }
     },
     {
       title: "Número do Dono",
