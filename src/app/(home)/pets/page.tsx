@@ -19,9 +19,11 @@ import { SearchOutlined, FilterOutlined } from "@ant-design/icons";
 import styles from "./pets.module.css";
 import api from "@/utils/axios";
 import { useAuth } from "@/app/context/AuthContext";
-import React, { use, useEffect, useState } from "react";
+import React, { use, useCallback, useEffect, useState } from "react";
 import PetFormModalForm from "@/dialogs/PetFormModalForm";
 import AgendamentoFormModalForm from "@/dialogs/AgendamentoModalForm";
+import {debounce} from "lodash";
+import { title } from "process";
 
 const { Header, Footer, Sider, Content } = Layout;
 const { TabPane } = Tabs;
@@ -32,7 +34,7 @@ export interface PetInfoInterface {
   nome:         string;
   sexo:         string;
   racaPet:      string;
-  observacoes:  null;
+  observacoes?:  string;
   dtNascimento: Date;
   clienteId:    number;
   nomeDono:     string;
@@ -43,6 +45,7 @@ const PetTable = () => {
   const [searchText, setSearchText] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("cadastro");
+  const [filterSexo, setFilterSexo] = useState(null); 
 
   const [formPet] = Form.useForm();
   const [formAgendamento] = Form.useForm();
@@ -128,7 +131,8 @@ const PetTable = () => {
     { title: "ID do Pet", dataIndex: "id", key: "id" },
     { title: "Nome do Pet", dataIndex: "nome", key: "nome" },
     { title: "Raça do Pet", dataIndex: "racaPet", key: "racaPet" },
-    { title: "Nome do Dono", dataIndex: "clienteNome", key: "clienteNome" },
+    {title: "Sexo", dataIndex: "sexo", key: "sexo"},
+    { title: "Nome do Dono", dataIndex: "nomeDono", key: "nomeDono" },
     {
       title: "Data de Nascimento",
       dataIndex: "dtNascimento",
@@ -151,6 +155,53 @@ const PetTable = () => {
     }
   };
 
+  const handleSearch = async (value) => {
+    try {
+      const response =   await api.get(`/pets`, {
+        params: {
+          nome: value,
+          sexo: filterSexo, 
+          userId: user?.userId,
+        }
+      });
+      setPets(response.data);
+    } catch (error) {
+      console.error("Erro ao buscar pets:", error);
+    }
+  } 
+
+  const debouncedSearch = useCallback(
+    debounce((value) => handleSearch(value), 500), 
+    []
+  );
+
+ const handleSearchFilter = async (value) => {
+    try {
+      const response = await api.get(`/pets`, {
+        params: {
+          nome: searchText,
+          sexo: value, 
+          userId: user?.userId,
+        },
+      });
+      setPets(response.data);
+    } catch (error) {
+      console.error("Erro ao buscar pets:", error);
+    }
+  }
+
+  const onChange = (e) => {
+    const value = e.target.value;
+    setSearchText(value);
+    debouncedSearch(value);
+  };
+
+  const onSexoChange = (value) => {
+  setFilterSexo(value); 
+  handleSearchFilter(value); 
+};
+ 
+
   return (
     <div className={styles.container} style={{ padding: 20 }}>
       <Flex
@@ -161,13 +212,21 @@ const PetTable = () => {
         <Space style={{ marginBottom: 16 }}>
           <Input
             placeholder="Pesquisar por Nome do Pet"
-            onChange={(e) => setSearchText(e.target.value)}
+            onChange={onChange}
             style={{ width: 300 }}
             prefix={<SearchOutlined />}
           />
-          <Button icon={<FilterOutlined />} iconPosition={"start"}>
-            Filtrar
-          </Button>
+        <Select
+          placeholder="Filtrar por Sexo"
+          style={{ width: 150 }}
+          onChange={onSexoChange}
+          allowClear
+          options={[
+            { value: "MACHO", label: "Macho" },
+            { value: "FEMEA", label: "Fêmea" },
+          ]}
+      />
+        
         </Space>
         <Button
           type="primary"
@@ -183,9 +242,12 @@ const PetTable = () => {
         pagination={false}
         rowKey="id"
       />
-      <Flex justify="center" className={styles.paginationContainer}>
-        <Pagination defaultCurrent={1} total={pets.length} />
-      </Flex>
+  
+      <div  className={styles.paginationContainer }>
+        <Flex   justify="center">
+          <Pagination defaultCurrent={1} total={pets.length} />
+        </Flex>
+      </div>
 
       <Modal
         open={isModalOpen}
