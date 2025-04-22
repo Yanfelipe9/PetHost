@@ -16,12 +16,17 @@ import {
   AutoComplete,
 } from "antd";
 
+interface Baia {
+  id: number;
+  descricao: string;
+}
 interface AgendamentoFormProps {
   form: any;
   pets: PetInfoInterface[];
+  baias: Baia[]
 }
 
-export default function AgendamentoFormModalForm({ form, pets }: AgendamentoFormProps) {
+export default function AgendamentoFormModalForm({ form, pets, baias }: AgendamentoFormProps) {
   return (
     <Form form={form} layout="vertical">
       <Form.Item
@@ -31,13 +36,14 @@ export default function AgendamentoFormModalForm({ form, pets }: AgendamentoForm
       >
         <AutoComplete
           options={pets.map((pet) => ({
-            value: pet.nome + " - " + pet.racaPet,
+            label: pet.nome + " - " + pet.racaPet,
+            value: pet.id,
           }))}
           style={{ width: "100%" }}
           placeholder="Buscar por nome do pet"
           allowClear
           filterOption={(inputValue, option) =>
-            option?.value
+            option?.label
               ?.toLowerCase()
               .includes(inputValue.toLowerCase())
           }
@@ -47,7 +53,7 @@ export default function AgendamentoFormModalForm({ form, pets }: AgendamentoForm
 
       <Row gutter={16}>
         <Col span={12}>
-          <Form.Item name="periodo" label="Período de estadia">
+          <Form.Item name="periodo" label="Período de estadia"  rules={[{ required: true, message: "Informe a estadia" }]}>
             <DatePicker.RangePicker
               style={{ width: "100%" }}
               format="DD/MM/YYYY"
@@ -57,10 +63,21 @@ export default function AgendamentoFormModalForm({ form, pets }: AgendamentoForm
           </Form.Item>
         </Col>
         <Col span={12}>
-          <Form.Item name="compartimento" label="Compartimento">
-            <Input
+          <Form.Item name="baia" label="baia"  rules={[{ required: true, message: "Informe a Báia" }]}>
+            <AutoComplete
+              options={baias.map((baia) => ({
+                value: baia.id.toString(), 
+                label: baia.descricao, 
+              }))}
+              style={{ width: "100%" }}
               placeholder="Ex: Canil 3"
-              prefix={<EnvironmentOutlined />}
+              allowClear
+              filterOption={(inputValue, option) =>
+                option?.label
+                  ?.toLowerCase()
+                  .includes(inputValue.toLowerCase())
+              }
+              onSelect={(value) => form.setFieldsValue({ baia: value })} 
             />
           </Form.Item>
         </Col>
@@ -68,7 +85,7 @@ export default function AgendamentoFormModalForm({ form, pets }: AgendamentoForm
 
       <Row gutter={16}>
         <Col span={12}>
-          <Form.Item name="valor" label="Valor">
+          <Form.Item name="valor" label="Valor"  rules={[{ required: true, message: "Informe o valor" }]}>
             <Input
               type="number"
               prefix="R$"
@@ -77,14 +94,14 @@ export default function AgendamentoFormModalForm({ form, pets }: AgendamentoForm
             />
           </Form.Item>
         </Col>
-        <Col span={12}>
-          <Form.Item name="pagamento" label="Forma de pagamento">
+        <Col span={12} >
+          <Form.Item name="pagamento" label="Forma de pagamento"  rules={[{ required: true, message: "Informe a forma de pagamento" }]}>
             <Select
               placeholder="Selecione"
               options={[
-                { value: "dinheiro", label: "Dinheiro" },
-                { value: "cartao", label: "Cartão" },
-                { value: "pix", label: "Pix" },
+                { value: "DINHEIRO", label: "Dinheiro" },
+                { value: "CARTAO", label: "Cartão" },
+                { value: "PIX", label: "Pix" },
               ]}
             />
           </Form.Item>

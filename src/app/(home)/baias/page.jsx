@@ -9,6 +9,8 @@ import { useAuth } from "@/app/context/AuthContext";
 const columns = [
   { title: "Baia", dataIndex: "descricao", key: "descricao" },
   { title: "Status", dataIndex: "status", key: "status" },
+  { title: "Limpeza", dataIndex: "limpeza", key: "limpeza" },
+  { title: "Nome do pet", dataIndex: "pet", key: "pet" },
 ];
 
 const Baias = () => {
