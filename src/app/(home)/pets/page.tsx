@@ -42,6 +42,7 @@ export interface PetInfoInterface {
 
 
 const PetTable = () => {
+  const { user } = useAuth();
   const [searchText, setSearchText] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("cadastro");
@@ -50,7 +51,6 @@ const PetTable = () => {
   const [formPet] = Form.useForm();
   const [formAgendamento] = Form.useForm();
 
-  const { user } = useAuth();
   const [pets, setPets] = useState<PetInfoInterface[]>([]);
   const [baias, setBaias] = useState([]);
   const [clientes, setClientes] = useState([]);
@@ -58,17 +58,15 @@ const PetTable = () => {
   useEffect(() => {
     if (!user?.userId) return;
 
-    const fetchPetsByUser = async (userId) => {
-      if (!userId) return null;
-      const response = await api.get(`/pets?userId=${userId}`);
+    fetchPetsByUser();
+  }, [user?.userId]);
+  
+  const fetchPetsByUser = async () => {
+    const response = await api.get(`/pets?userId=${user.userId}`);
 
-      setPets(response.data);
-    };
-
-    fetchPetsByUser(user.userId);
-  }, []);
-
-
+    setPets(response.data);
+  };
+  
   const showModal = () => {
     fetchClientes();
     fetchBaias();
@@ -100,17 +98,8 @@ const PetTable = () => {
           console.log("Pet cadastrado com sucesso:", response.data);
           formPet.resetFields();
         }
-        const clienteSelecionado = clientes.find(
-          (cliente) => cliente.id === values.clienteId
-        );
-
-        const novoPetComDono = {
-          ...response.data,
-          clienteNome: clienteSelecionado?.nome,
-          clienteTelefone: clienteSelecionado?.telefone,
-        };
-
-        setPets((prevPets) => [...prevPets, novoPetComDono]);
+        
+        fetchPetsByUser();
         setIsModalOpen(false);
       } else if (activeTab === "agendamento") {
         console.log("Agendamento:", values);

@@ -1,7 +1,7 @@
 import { Prompt } from "next/font/google";
 import "./globals.css";
 import "antd/dist/reset.css"; // Importação correta para Ant Design 5+
-
+import "primeflex/primeflex.css";
 import AuthProvider from "@/components/AuthProvider";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
 import { AuthContextProvider } from "./context/AuthContext";
@@ -18,10 +18,8 @@ export default async function RootLayout({ children }) {
     <html lang="pt-br" className={prompt.className}>
       <Head>
         <link
-          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css"
           rel="stylesheet"
-          integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1"
-          crossOrigin="anonymous"
+          href="https://unpkg.com/primeflex@latest/primeflex.css"
         />
       </Head>
       <body>
