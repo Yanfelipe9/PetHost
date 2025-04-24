@@ -136,14 +136,35 @@ export default function Dashboard() {
     <main className={styles.dashboardContainer}>
       <div className={styles.gridTop}>
         <Card className={`${styles.card} ${styles.cardVisaoGeral}`}>
-          <Title level={5} style={{ fontSize: "20px" }} className={styles.sectionTitle}>Visão geral</Title>
+          <Title
+            level={5}
+            style={{ fontSize: "20px" }}
+            className={styles.sectionTitle}
+          >
+            Visão geral
+          </Title>
           <Row gutter={{ xs: [8, 8], md: [24, 24] }} wrap>
             {stats.map((stat, idx) => (
-              <Col key={idx} xs={24} sm={12} md={8} lg={6} xl={4} className={styles.statItem}>
-                <Text type="secondary" style={{ fontSize: "12px" }}>{stat.description}</Text>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <Col
+                key={idx}
+                xs={24}
+                sm={12}
+                md={8}
+                lg={6}
+                xl={4}
+                className={styles.statItem}
+              >
+                <Text type="secondary" style={{ fontSize: "12px" }}>
+                  {stat.description}
+                </Text>
+                <div
+                  style={{ display: "flex", alignItems: "center", gap: "16px" }}
+                  className="justify-content-between md:justify-content-start"
+                >
                   <Text style={{ fontSize: "14px" }}>{stat.label}</Text>
-                  <Text strong style={{ color: "#3b82f6", fontSize: "22px" }}>{stat.value}</Text>
+                  <Text strong style={{ color: "#3b82f6", fontSize: "22px" }}>
+                    {stat.value}
+                  </Text>
                 </div>
               </Col>
             ))}
@@ -151,38 +172,107 @@ export default function Dashboard() {
         </Card>
 
         <Card className={`${styles.card} ${styles.cardBaia}`}>
-          <Title level={5} style={{ fontSize: "20px" }} className={styles.sectionTitle}>Status das baias</Title>
+          <Title
+            level={5}
+            style={{ fontSize: "20px" }}
+            className={styles.sectionTitle}
+          >
+            Status das baias
+          </Title>
           <Row>
             <Col span={12}>
-              <Text type="secondary" style={{ fontSize: "16px" }}>Baias ocupadas</Text>
-              <div><strong>104</strong></div>
-              <Text type="secondary" style={{ fontSize: "16px" }}>Limpas</Text>
+              <Text type="secondary" style={{ fontSize: "16px" }}>
+                Baias ocupadas
+              </Text>
+              <div>
+                <strong>104</strong>
+              </div>
+              <Text type="secondary" style={{ fontSize: "16px" }}>
+                Limpas
+              </Text>
               <div>90</div>
-              <Text type="secondary" style={{ fontSize: "16px" }}>Sujas</Text>
+              <Text type="secondary" style={{ fontSize: "16px" }}>
+                Sujas
+              </Text>
               <div>4</div>
             </Col>
             <Col span={12}>
-              <Text type="secondary" style={{ fontSize: "16px" }}>Baias disponíveis</Text>
-              <div><strong>20</strong></div>
-              <Text type="secondary" style={{ fontSize: "16px" }}>Limpas</Text>
+              <Text type="secondary" style={{ fontSize: "16px" }}>
+                Baias disponíveis
+              </Text>
+              <div>
+                <strong>20</strong>
+              </div>
+              <Text type="secondary" style={{ fontSize: "16px" }}>
+                Limpas
+              </Text>
               <div>30</div>
-              <Text type="secondary" style={{ fontSize: "16px" }}>Sujas</Text>
+              <Text type="secondary" style={{ fontSize: "16px" }}>
+                Sujas
+              </Text>
               <div>19</div>
             </Col>
           </Row>
         </Card>
 
         <Card className={`${styles.card} ${styles.cardRadial}`}>
-          <Title level={5} style={{ fontSize: "20px" }} className={styles.sectionTitle}>Status do Hotel</Title>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: "1rem", justifyContent: "center", alignItems: "center" }}>
-            <div ref={chartRefRadial} style={{ flex: 1, minWidth: "200px", maxWidth: "300px", width: "100%" }} />
-            <div style={{ display: "flex", flexDirection: "column", gap: "8px", fontSize: "14px" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-                <span style={{ width: "10px", height: "10px", backgroundColor: "#3b82f6", borderRadius: "50%" }}></span>
+          <Title
+            level={5}
+            style={{ fontSize: "20px" }}
+            className={styles.sectionTitle}
+          >
+            Status do Hotel
+          </Title>
+          <div
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              gap: "1rem",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <div
+              ref={chartRefRadial}
+              style={{
+                flex: 1,
+                minWidth: "200px",
+                maxWidth: "300px",
+                width: "100%",
+              }}
+            />
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "8px",
+                fontSize: "14px",
+              }}
+            >
+              <div
+                style={{ display: "flex", alignItems: "center", gap: "6px" }}
+              >
+                <span
+                  style={{
+                    width: "10px",
+                    height: "10px",
+                    backgroundColor: "#3b82f6",
+                    borderRadius: "50%",
+                  }}
+                ></span>
                 <span style={{ color: "#6b7280" }}>Completo</span>
               </div>
-              <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-                <span style={{ width: "10px", height: "10px", backgroundColor: "#e5e7eb", borderRadius: "50%" }}></span>
+              <div
+                style={{ display: "flex", alignItems: "center", gap: "6px" }}
+              >
+                <span
+                  style={{
+                    width: "10px",
+                    height: "10px",
+                    backgroundColor: "#e5e7eb",
+                    borderRadius: "50%",
+                  }}
+                ></span>
                 <span style={{ color: "#6b7280" }}>Ainda a completar</span>
               </div>
             </div>
@@ -191,7 +281,9 @@ export default function Dashboard() {
       </div>
 
       <Card className={styles.card}>
-        <Title level={5} className={styles.sectionTitle}>Estatísticas de Ocupação</Title>
+        <Title level={5} className={styles.sectionTitle}>
+          Estatísticas de Ocupação
+        </Title>
         <div ref={chartRefBar}></div>
       </Card>
     </main>
