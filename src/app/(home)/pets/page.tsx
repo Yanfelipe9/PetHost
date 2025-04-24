@@ -52,8 +52,8 @@ const PetTable = () => {
 
   const { user } = useAuth();
   const [pets, setPets] = useState<PetInfoInterface[]>([]);
+  const [baias, setBaias] = useState([]);
   const [clientes, setClientes] = useState([]);
-  const [value, setValue] = useState("");
 
   useEffect(() => {
     if (!user?.userId) return;
@@ -71,6 +71,7 @@ const PetTable = () => {
 
   const showModal = () => {
     fetchClientes();
+    fetchBaias();
     formPet.resetFields();
     formAgendamento.resetFields();
     setIsModalOpen(true);
@@ -147,8 +148,8 @@ const PetTable = () => {
     },
     {
       title: "Número do Dono",
-      dataIndex: "clienteTelefone",
-      key: "clienteTelefone",
+      dataIndex: "telefoneDono",
+      key: "telefoneDono",
     },
     { title: "Observações", dataIndex: "observacoes", key: "observacoes" },
   ];
@@ -161,6 +162,15 @@ const PetTable = () => {
       console.error("Erro ao buscar clientes:", error);
     }
   };
+
+  const fetchBaias = async () => {
+    try {
+      const response = await api.get("/baias/" + user?.userId);
+      setBaias(response.data);
+    } catch (error) {
+      console.error("Erro ao buscar baias:", error);
+    }
+  }
 
   const handleSearch = async (value) => {
     try {
@@ -282,7 +292,7 @@ const PetTable = () => {
             key="agendamento"
             children={
               <>
-                <AgendamentoFormModalForm form={formAgendamento} pets={pets} />
+                <AgendamentoFormModalForm form={formAgendamento} pets={pets} baias={baias}  />
               </>
             }
           />
