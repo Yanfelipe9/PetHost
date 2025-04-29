@@ -8,45 +8,40 @@ import {
   Flex,
   Modal,
   Form,
-  Radio,
-  Avatar,
   Layout,
   Select,
   Pagination,
   Tabs,
 } from "antd";
-import { SearchOutlined, FilterOutlined } from "@ant-design/icons";
+import { SearchOutlined } from "@ant-design/icons";
 import styles from "./pets.module.css";
 import api from "@/utils/axios";
 import { useAuth } from "@/app/context/AuthContext";
-import React, { use, useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import PetFormModalForm from "@/dialogs/PetFormModalForm";
 import AgendamentoFormModalForm from "@/dialogs/AgendamentoModalForm";
-import {debounce} from "lodash";
-import { title } from "process";
+import { debounce } from "lodash";
 
 const { Header, Footer, Sider, Content } = Layout;
 const { TabPane } = Tabs;
 
-
 export interface PetInfoInterface {
-  id:           number;
-  nome:         string;
-  sexo:         string;
-  racaPet:      string;
-  observacoes?:  string;
+  id: number;
+  nome: string;
+  sexo: string;
+  racaPet: string;
+  observacoes?: string;
   dtNascimento: Date;
-  clienteId:    number;
-  nomeDono:     string;
+  clienteId: number;
+  nomeDono: string;
 }
-
 
 const PetTable = () => {
   const { user } = useAuth();
   const [searchText, setSearchText] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("cadastro");
-  const [filterSexo, setFilterSexo] = useState(null); 
+  const [filterSexo, setFilterSexo] = useState(null);
 
   const [formPet] = Form.useForm();
   const [formAgendamento] = Form.useForm();
@@ -57,16 +52,14 @@ const PetTable = () => {
 
   useEffect(() => {
     if (!user?.userId) return;
-
     fetchPetsByUser();
   }, [user?.userId]);
-  
+
   const fetchPetsByUser = async () => {
     const response = await api.get(`/pets?userId=${user.userId}`);
-
     setPets(response.data);
   };
-  
+
   const showModal = () => {
     fetchClientes();
     fetchBaias();
@@ -83,6 +76,7 @@ const PetTable = () => {
           : await formAgendamento.validateFields();
 
       console.log("Valores do formulário:", values);
+
       if (activeTab === "cadastro") {
         const body = {
           nome: values.nome,
@@ -98,16 +92,35 @@ const PetTable = () => {
           console.log("Pet cadastrado com sucesso:", response.data);
           formPet.resetFields();
         }
-        
+
         fetchPetsByUser();
         setIsModalOpen(false);
       } else if (activeTab === "agendamento") {
-        console.log("Agendamento:", values);
-        // Aqui você pode colocar a lógica de envio para a API de agendamento
-      }
+        const agendamentoBody = {
+          id_pet: values.petId,
+          id_baia: values.baiaId,
+          valor: values.valor,
+          status_pagamento: values.status_pagamento,
+          forma_pagamento: values.forma_pagamento,
+        };
 
-      // setIsModalOpen(false);
-      // form.resetFields();
+        console.log("Corpo do agendamento:", agendamentoBody);
+
+        try {
+          const response = await api.post("/agendamentos", agendamentoBody);
+          if (response.status === 200) {
+            console.log("Agendamento cadastrado com sucesso:", response.data);
+            formAgendamento.resetFields();
+            setIsModalOpen(false);
+          }
+        } catch (error) {
+          if (error.response) {
+            console.error("Erro no backend:", error.response.data);
+          } else {
+            console.error("Erro inesperado:", error);
+          }
+        }
+      }
     } catch (error) {
       console.error("Erro ao salvar:", error);
     }
@@ -121,19 +134,21 @@ const PetTable = () => {
     { title: "ID do Pet", dataIndex: "id", key: "id" },
     { title: "Nome do Pet", dataIndex: "nome", key: "nome" },
     { title: "Raça do Pet", dataIndex: "racaPet", key: "racaPet" },
-    {title: "Sexo", dataIndex: "sexo", key: "sexo"},
+    { title: "Sexo", dataIndex: "sexo", key: "sexo" },
     { title: "Nome do Dono", dataIndex: "nomeDono", key: "nomeDono" },
     {
       title: "Data de Nascimento",
       dataIndex: "dtNascimento",
       key: "dtNascimento",
-      render: (text : string) => {
-        const date = text.split("-")
-        const dia = date[2].padStart(2, "0");
-        const mes = date[1].padStart(2, "0");
-        const ano = date[0];
+      render: (text: any) => {
+        if (!text) return "-";
+        const dateString =
+          typeof text === "string"
+            ? text
+            : new Date(text).toISOString().split("T")[0];
+        const [ano, mes, dia] = dateString.split("-");
         return `${dia}/${mes}/${ano}`;
-      }
+      },
     },
     {
       title: "Número do Dono",
@@ -159,34 +174,14 @@ const PetTable = () => {
     } catch (error) {
       console.error("Erro ao buscar baias:", error);
     }
-  }
+  };
 
   const handleSearch = async (value) => {
     try {
-      const response =   await api.get(`/pets`, {
-        params: {
-          nome: value,
-          sexo: filterSexo, 
-          userId: user?.userId,
-        }
-      });
-      setPets(response.data);
-    } catch (error) {
-      console.error("Erro ao buscar pets:", error);
-    }
-  } 
-
-  const debouncedSearch = useCallback(
-    debounce((value) => handleSearch(value), 500), 
-    []
-  );
-
- const handleSearchFilter = async (value) => {
-    try {
       const response = await api.get(`/pets`, {
         params: {
-          nome: searchText,
-          sexo: value, 
+          nome: value,
+          sexo: filterSexo,
           userId: user?.userId,
         },
       });
@@ -194,7 +189,27 @@ const PetTable = () => {
     } catch (error) {
       console.error("Erro ao buscar pets:", error);
     }
-  }
+  };
+
+  const debouncedSearch = useCallback(
+    debounce((value) => handleSearch(value), 500),
+    []
+  );
+
+  const handleSearchFilter = async (value) => {
+    try {
+      const response = await api.get(`/pets`, {
+        params: {
+          nome: searchText,
+          sexo: value,
+          userId: user?.userId,
+        },
+      });
+      setPets(response.data);
+    } catch (error) {
+      console.error("Erro ao buscar pets:", error);
+    }
+  };
 
   const onChange = (e) => {
     const value = e.target.value;
@@ -203,18 +218,13 @@ const PetTable = () => {
   };
 
   const onSexoChange = (value) => {
-  setFilterSexo(value); 
-  handleSearchFilter(value); 
-};
- 
+    setFilterSexo(value);
+    handleSearchFilter(value);
+  };
 
   return (
     <div className={styles.container} style={{ padding: 20 }}>
-      <Flex
-        justify="space-between"
-        align="flex-start"
-        className={styles.header}
-      >
+      <Flex justify="space-between" align="flex-start" className={styles.header}>
         <Space style={{ marginBottom: 16 }}>
           <Input
             placeholder="Pesquisar por Nome do Pet"
@@ -222,35 +232,26 @@ const PetTable = () => {
             style={{ width: 300 }}
             prefix={<SearchOutlined />}
           />
-        <Select
-          placeholder="Filtrar por Sexo"
-          style={{ width: 150 }}
-          onChange={onSexoChange}
-          allowClear
-          options={[
-            { value: "MACHO", label: "Macho" },
-            { value: "FEMEA", label: "Fêmea" },
-          ]}
-      />
-        
+          <Select
+            placeholder="Filtrar por Sexo"
+            style={{ width: 150 }}
+            onChange={onSexoChange}
+            allowClear
+            options={[
+              { value: "MACHO", label: "Macho" },
+              { value: "FEMEA", label: "Fêmea" },
+            ]}
+          />
         </Space>
-        <Button
-          type="primary"
-          onClick={showModal}
-          className={styles.createButton}
-        >
+        <Button type="primary" onClick={showModal} className={styles.createButton}>
           Criar
         </Button>
       </Flex>
-      <Table
-        columns={columns}
-        dataSource={pets || []}
-        pagination={false}
-        rowKey="id"
-      />
-  
-      <div  className={styles.paginationContainer }>
-        <Flex   justify="center">
+
+      <Table columns={columns} dataSource={pets || []} pagination={false} rowKey="id" />
+
+      <div className={styles.paginationContainer}>
+        <Flex justify="center">
           <Pagination defaultCurrent={1} total={pets.length} />
         </Flex>
       </div>
@@ -260,7 +261,7 @@ const PetTable = () => {
         onOk={handleOk}
         onCancel={handleCancel}
         width={700}
-        footer={null} // Custom footer (removido por enquanto, pode ser adicionado depois)
+        footer={null}
       >
         <Tabs
           activeKey={activeTab}
@@ -270,20 +271,12 @@ const PetTable = () => {
           <Tabs.TabPane
             tab="Cadastro Pets"
             key="cadastro"
-            children={
-              <>
-                <PetFormModalForm form={formPet} clientes={clientes} />
-              </>
-            }
+            children={<PetFormModalForm form={formPet} clientes={clientes} />}
           />
           <Tabs.TabPane
             tab="Agendamento"
             key="agendamento"
-            children={
-              <>
-                <AgendamentoFormModalForm form={formAgendamento} pets={pets} baias={baias}  />
-              </>
-            }
+            children={<AgendamentoFormModalForm form={formAgendamento} pets={pets} baias={baias} />}
           />
         </Tabs>
 
