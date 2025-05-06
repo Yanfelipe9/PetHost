@@ -1,77 +1,119 @@
 'use client';
 
-import styles from './despesas.module.css'
-import { Card, Input, Select, Button, Space, Table} from "antd";
+import styles from './despesas.module.css';
+import { Card, Input, Select, Button, Table, Col, Row, Pagination, Tag, Space } from "antd";
+import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 
 const DespesasPage = () => {
     const handleChange = value => {
         console.log(`selected ${value}`);
     };
+
     const columns = [
         {
-          title: 'Descrição',
-          dataIndex: 'descrição',
-          key: 'descrição',
+            title: 'Descrição',
+            dataIndex: 'descricao',
+            key: 'descricao',
         },
         {
-          title: 'Categoria',
-          dataIndex: 'categoria',
-          key: 'categoria',
+            title: 'Categoria',
+            dataIndex: 'categoria',
+            key: 'categoria',
+            render: categoria => (
+                <Tag color={categoria === 'Mensal' ? 'blue' : 'red'}>
+                    {categoria}
+                </Tag>
+            )
         },
         {
-          title: 'Valor total',
-          dataIndex: 'valor total',
-          key: 'valor total',
+            title: 'Valor total',
+            dataIndex: 'valor',
+            key: 'valor',
         },
         {
-            dataIndex: 'editar',
             key: 'editar',
+            render: () => <EditOutlined style={{ fontSize: 18, cursor: 'pointer' }} />
         },
         {
-            dataIndex: 'deletar',
-            key: 'deletar'
+            key: 'deletar',
+            render: () => <DeleteOutlined style={{ fontSize: 18, cursor: 'pointer' }} />
         }
-      ];
+    ];
+
+    const data = [
+        { key: 1, descricao: 'Salários', categoria: 'Mensal', valor: 'R$ 467,00' },
+        { key: 2, descricao: 'Produtos de limpeza', categoria: 'Custos casuais', valor: 'R$ 467,00' },
+        { key: 3, descricao: 'Manutenção', categoria: 'Custos casuais', valor: 'R$ 467,00' },
+        { key: 4, descricao: 'Luz', categoria: 'Mensal', valor: 'R$ 467,00' },
+    ];
+
     return (
         <main className={styles.container}>
-            <Card>
-                <p>Descrição</p>
-                <Input placeholder="Digite a Descrição" />
-                <p>Valor</p>
-                <Input placeholder="Digite o valor" />  
-                <Select
-                    placeholder="Despesas fixas"
-                    style={{ width: 120 }}
-                    onChange={handleChange}
-                    options={[
-                        { value: 'diario', label: 'Diario' },
-                        { value: 'semanal', label: 'Semanal' },
-                        { value: 'mensal', label: 'Mensal' },
-                    ]}
-                />    
-                <Button type="primary">Adicionar despesa</Button>
-            </Card>
-            <Card>
-                <Space wrap>        
-                    <Card style={{ background: 'rgba(21, 112, 239, 1)', color: 'white' }}>
-                        <h3>Despesa Diária</h3>
-                        <h3>$3120.54</h3>
-                    </Card>
-                    <Card style={{ background: 'rgba(21, 112, 239, 1)', color: 'white' }}>
-                        <h3>Despesa Semanal</h3>
-                        <h3>$3120.54</h3>
-                    </Card>
-                    <Card style={{ background: 'rgba(21, 112, 239, 1)', color: 'white' }}>
-                        <h3>Despesas Mensal</h3>
-                        <h3>$3120.54</h3>
-                    </Card>
-                </Space>
-            </Card>
-            <Card>
-                <Table columns={columns} />;
-            </Card>
+            <Space direction="vertical" size="large" style={{ width: '100%' }}>
+                {/* Formulário */}
+                <Card className={styles.grayCard}>
+                    <Row gutter={16}>
+                        <Col xs={24} md={8} className={styles.fullHeight}>
+                            <h3><strong>Descrição</strong></h3>
+                            <Input placeholder="Digite a descrição" style={{ height: 48, fontSize: 16 }} />
+                            <h3 style={{ marginTop: 16 }}><strong>Valor</strong></h3>
+                            <Input placeholder="Digite o valor" style={{ height: 48, fontSize: 16 }} />
+                        </Col>
+
+                        <Col className={styles.fullHeight} xs={24} md={8} style={{ paddingLeft: 250 }}>
+                            <h3><strong>Tipo de Despesa</strong></h3>
+                            <Select
+                                placeholder="Despesas fixas"
+                                style={{ width: '100%', height: 48, fontSize: 16 }}
+                                onChange={handleChange}
+                                options={[
+                                    { value: 'diario', label: 'DIÁRIO' },
+                                    { value: 'semanal', label: 'SEMANAL' },
+                                    { value: 'mensal', label: 'MENSAL' },
+                                ]}
+                            />
+                        </Col>
+
+                        <Col xs={24} md={8} style={{ paddingLeft: 250, display: 'flex', alignItems: 'flex-end' }}>
+                            <Button type="primary" style={{ width: '100%', height: 48, fontSize: 16 }}>
+                                Adicionar despesa
+                            </Button>
+                        </Col>
+                    </Row>
+                </Card>
+
+                {/* Cards de resumo */}
+                <Card className={styles.borderedSummaryCard} style={{ color: 'white', borderRadius: 10, textAlign: 'center', width: 800}}>
+                    <Row gutter={16} justify="start">
+                        <Col>
+                            <Card style={{ backgroundColor: '#1570EF', color: 'white', borderRadius: 10, textAlign: 'center', width: 180 }}>
+                                <h4>Despesa Diária</h4>
+                                <h3>R$ 6.169,00</h3>
+                            </Card>
+                        </Col>
+                        <Col>
+                            <Card style={{ backgroundColor: '#1570EF', color: 'white', borderRadius: 10, textAlign: 'center', width: 180 }}>
+                                <h4>Despesa Semanal</h4>
+                                <h3>R$ 6.169,00</h3>
+                            </Card>
+                        </Col>
+                        <Col>
+                            <Card style={{ backgroundColor: '#1570EF', color: 'white', borderRadius: 10, textAlign: 'center', width: 180 }}>
+                                <h4>Despesa Mensal</h4>
+                                <h3>R$ 6.169,00</h3>
+                            </Card>
+                        </Col>
+                    </Row>
+                </Card>
+
+                {/* Tabela */}
+                <Card  className={styles.borderedSummaryCard}>
+                    <Table columns={columns} dataSource={data} pagination={false} />
+                    <Pagination  align="center" style={{ marginTop: 16, textAlign: 'right' }} defaultCurrent={1} total={10} />
+                </Card>
+            </Space>
         </main>
-    )
-}
+    );
+};
 
 export default DespesasPage;
