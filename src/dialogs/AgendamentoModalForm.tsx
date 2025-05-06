@@ -2,18 +2,16 @@
 import { PetInfoInterface } from "@/app/(home)/pets/page";
 import {
   CalendarOutlined,
-  EnvironmentOutlined,
-  DollarOutlined,
-  InfoCircleOutlined,
+  DollarOutlined
 } from "@ant-design/icons";
 import {
+  AutoComplete,
+  Col,
+  DatePicker,
   Form,
   Input,
-  DatePicker,
   Row,
-  Col,
   Select,
-  AutoComplete,
 } from "antd";
 
 interface Baia {
@@ -35,19 +33,23 @@ export default function AgendamentoFormModalForm({ form, pets, baias }: Agendame
         rules={[{ required: true, message: "Informe o nome do pet" }]}
       >
         <AutoComplete
-          options={pets.map((pet) => ({
-            label: pet.nome + " - " + pet.racaPet,
-            value: pet.id,
-          }))}
+            options={pets.map((pet) => ({
+              label: `${pet.nome} - ${pet.racaPet}`,
+              value: `${pet.nome} - ${pet.racaPet}`, // mostra isso no campo
+              petId: pet.id, // armazena o ID junto
+            }))}
           style={{ width: "100%" }}
           placeholder="Buscar por nome do pet"
           allowClear
+          optionFilterProp="label"
           filterOption={(inputValue, option) =>
             option?.label
               ?.toLowerCase()
               .includes(inputValue.toLowerCase())
           }
-          onSelect={(value) => form.setFieldsValue({ busca: value })}
+          onSelect={(value, option) => {
+            form.setFieldsValue({ busca: value, petId: option.petId });
+          }}
         />
       </Form.Item>
 
@@ -63,23 +65,25 @@ export default function AgendamentoFormModalForm({ form, pets, baias }: Agendame
           </Form.Item>
         </Col>
         <Col span={12}>
-          <Form.Item name="baia" label="baia"  rules={[{ required: true, message: "Informe a Báia" }]}>
-            <AutoComplete
-              options={baias.map((baia) => ({
-                value: baia.id.toString(), 
-                label: baia.descricao, 
-              }))}
-              style={{ width: "100%" }}
-              placeholder="Ex: Canil 3"
-              allowClear
-              filterOption={(inputValue, option) =>
-                option?.label
-                  ?.toLowerCase()
-                  .includes(inputValue.toLowerCase())
-              }
-              onSelect={(value) => form.setFieldsValue({ baia: value })} 
-            />
-          </Form.Item>
+        <Form.Item name="baia" label="baia" rules={[{ required: true, message: "Informe a Báia" }]}>
+          <AutoComplete
+            options={baias.map((baia) => ({
+              label: baia.descricao,
+              value: baia.descricao, // exibe descrição no input
+              baiaId: baia.id, // ID real vai junto
+            }))}
+            style={{ width: "100%" }}
+            placeholder="Ex: Canil 3"
+            allowClear
+            filterOption={(inputValue, option) =>
+              option?.label?.toLowerCase().includes(inputValue.toLowerCase())
+            }
+            onSelect={(value, option) => {
+              form.setFieldsValue({ baia: value, baiaId: option.baiaId });
+            }}
+          />
+        </Form.Item>
+
         </Col>
       </Row>
 

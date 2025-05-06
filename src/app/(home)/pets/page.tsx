@@ -1,26 +1,27 @@
 "use client";
 
+import { useAuth } from "@/app/context/AuthContext";
+import AgendamentoFormModalForm from "@/dialogs/AgendamentoModalForm";
+import PetFormModalForm from "@/dialogs/PetFormModalForm";
+import api from "@/utils/axios";
+import { SearchOutlined } from "@ant-design/icons";
 import {
-  Table,
-  Input,
   Button,
-  Space,
   Flex,
-  Modal,
   Form,
+  Input,
   Layout,
-  Select,
+  message,
+  Modal,
   Pagination,
+  Select,
+  Space,
+  Table,
   Tabs,
 } from "antd";
-import { SearchOutlined } from "@ant-design/icons";
-import styles from "./pets.module.css";
-import api from "@/utils/axios";
-import { useAuth } from "@/app/context/AuthContext";
-import React, { useCallback, useEffect, useState } from "react";
-import PetFormModalForm from "@/dialogs/PetFormModalForm";
-import AgendamentoFormModalForm from "@/dialogs/AgendamentoModalForm";
 import { debounce } from "lodash";
+import { useCallback, useEffect, useState } from "react";
+import styles from "./pets.module.css";
 
 const { Header, Footer, Sider, Content } = Layout;
 const { TabPane } = Tabs;
@@ -96,12 +97,18 @@ const PetTable = () => {
         fetchPetsByUser();
         setIsModalOpen(false);
       } else if (activeTab === "agendamento") {
+        debugger
+        const dtInicio = formatDateToBackendString(values.periodo[0]);
+        const dtFim = formatDateToBackendString(values.periodo[1]);
+        
         const agendamentoBody = {
-          id_pet: values.petId,
-          id_baia: values.baiaId,
+          dataHoraInicio: dtInicio,
+          dataHoraFim: dtFim,
+          idPet: values.petId,
+          idBaia: values.baiaId,
           valor: values.valor,
-          status_pagamento: values.status_pagamento,
-          forma_pagamento: values.forma_pagamento,
+          formaPagamento: values.pagamento,
+          userId: user.userId
         };
 
         console.log("Corpo do agendamento:", agendamentoBody);
@@ -112,6 +119,7 @@ const PetTable = () => {
             console.log("Agendamento cadastrado com sucesso:", response.data);
             formAgendamento.resetFields();
             setIsModalOpen(false);
+            message.success("Agendamento criado com sucesso!")
           }
         } catch (error) {
           if (error.response) {
@@ -126,6 +134,12 @@ const PetTable = () => {
     }
   };
 
+
+  function formatDateToBackendString(dateObj) {
+    const pad = (num) => String(num).padStart(2, '0');
+  
+    return `${dateObj.year()}-${pad(dateObj.month() + 1)}-${pad(dateObj.date())}T${pad(dateObj.hour())}:${pad(dateObj.minute())}:${pad(dateObj.second())}`;
+  }
   const handleCancel = () => {
     setIsModalOpen(false);
   };
