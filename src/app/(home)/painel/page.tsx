@@ -1,16 +1,32 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { use, useEffect, useRef, useState } from "react";
 import { Card, Col, Row, Typography } from "antd";
 import ApexCharts from "apexcharts";
 import styles from "./painel.module.css";
+import api from "@/utils/axios";
+import { count } from "console";
 
 const { Title, Text } = Typography;
 
+interface VisaoGeral {
+  countCheckIn: number;
+  countCheckOut: number;
+  countTotaHospedadoHotel: number;
+  countBaiasDisponiveis: number;
+  countBaiasOcupadas: number;
+}
 export default function Dashboard() {
   const chartRefBar = useRef(null);
   const chartRefRadial = useRef(null);
   const [fontSize, setFontSize] = useState(window.innerWidth <= 500 ? "8px" : "12px");
+  const [dadosGerais, setDadosGerais] = useState<VisaoGeral>({
+    countCheckIn: 0,
+    countCheckOut: 0,
+    countTotaHospedadoHotel: 0,
+    countBaiasDisponiveis: 0,
+    countBaiasOcupadas: 0,
+  });
 
   // Função para ajustar o fontSize ao redimensionar a tela
   const handleResize = () => {
@@ -124,12 +140,28 @@ export default function Dashboard() {
     }
   }, [fontSize]); // A dependência foi alterada para "fontSize", assim o gráfico será re-renderizado quando a largura da tela mudar
 
+  useEffect(() => {
+    getVisalGeralDados();
+  })
+
+  const getVisalGeralDados = () => {
+    api.get("/visao-geral").then((res) => {
+      if (res.status === 200) {
+        const data = res.data as VisaoGeral;
+        // Aqui você pode usar os dados recebidos para atualizar o estado ou fazer o que precisar
+        setDadosGerais(data);
+      } else {
+        console.error("Erro ao buscar dados da visão geral");
+      }
+    });
+  }
+
   const stats = [
-    { label: "Check-in", value: 23, description: "Hoje" },
-    { label: "Check-out", value: 13, description: "Hoje" },
-    { label: "No hotel", value: 60, description: "Total" },
-    { label: "Baias disponíveis", value: 10, description: "Total" },
-    { label: "Baias ocupadas", value: 90, description: "Total" },
+    { label: "Check-in", value: dadosGerais.countCheckIn, description: "Hoje" },
+    { label: "Check-out", value: dadosGerais.countCheckOut, description: "Hoje" },
+    { label: "No hotel", value: dadosGerais.countTotaHospedadoHotel, description: "Total" },
+    { label: "Baias disponíveis", value: dadosGerais.countBaiasDisponiveis, description: "Total" },
+    { label: "Baias ocupadas", value: dadosGerais.countBaiasOcupadas, description: "Total" },
   ];
 
   return (
@@ -143,7 +175,7 @@ export default function Dashboard() {
           >
             Visão geral
           </Title>
-          <Row gutter={{ xs: [8, 8], md: [24, 24] }} wrap>
+          <Row gutter={[8, 24]} wrap>
             {stats.map((stat, idx) => (
               <Col
                 key={idx}
