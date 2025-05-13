@@ -1,7 +1,7 @@
 'use client';
 
 import styles from './despesas.module.css'
-import { Card, Input, Select, Button, Space, Table} from "antd";
+import { Card, Input, Select, Button, Space, Table } from "antd";
 
 const DespesasPage = () => {
     const handleChange = value => {
@@ -9,19 +9,19 @@ const DespesasPage = () => {
     };
     const columns = [
         {
-          title: 'Descrição',
-          dataIndex: 'descrição',
-          key: 'descrição',
+            title: 'Descrição',
+            dataIndex: 'descrição',
+            key: 'descrição',
         },
         {
-          title: 'Categoria',
-          dataIndex: 'categoria',
-          key: 'categoria',
+            title: 'Categoria',
+            dataIndex: 'categoria',
+            key: 'categoria',
         },
         {
-          title: 'Valor total',
-          dataIndex: 'valor total',
-          key: 'valor total',
+            title: 'Valor total',
+            dataIndex: 'valor total',
+            key: 'valor total',
         },
         {
             dataIndex: 'editar',
@@ -31,28 +31,39 @@ const DespesasPage = () => {
             dataIndex: 'deletar',
             key: 'deletar'
         }
-      ];
+    ];
     return (
         <main className={styles.container}>
+            <div className={styles.cardContainer}>
+                <div className={styles.cardContainer1}>
+                    <div>
+                        <p className={styles.p1}>Descrição</p>
+                        <Input placeholder="Digite a Descrição" />
+                    </div>
+                    <div>
+                        <p className={styles.p1}>Valor</p>
+                        <Input placeholder="Digite o valor" />
+                    </div>
+                </div>
+                <div className={styles.select}>
+                    <Select
+                        className={`${styles.select} ant-select`}
+                        placeholder="Despesas fixas"
+                        onChange={handleChange}
+                        options={[
+                            { value: 'diario', label: 'Diário' },
+                            { value: 'semanal', label: 'Semanal' },
+                            { value: 'mensal', label: 'Mensal' },
+                        ]}
+                    />
+                </div>
+                <div className={styles.cardContainerButton}>
+                    <Button type="primary">Adicionar despesa</Button>
+                </div>
+            </div>
+
             <Card>
-                <p>Descrição</p>
-                <Input placeholder="Digite a Descrição" />
-                <p>Valor</p>
-                <Input placeholder="Digite o valor" />  
-                <Select
-                    placeholder="Despesas fixas"
-                    style={{ width: 120 }}
-                    onChange={handleChange}
-                    options={[
-                        { value: 'diario', label: 'Diario' },
-                        { value: 'semanal', label: 'Semanal' },
-                        { value: 'mensal', label: 'Mensal' },
-                    ]}
-                />    
-                <Button type="primary">Adicionar despesa</Button>
-            </Card>
-            <Card>
-                <Space wrap>        
+                <Space wrap className={styles.cardContainer2}>
                     <Card style={{ background: 'rgba(21, 112, 239, 1)', color: 'white' }}>
                         <h3>Despesa Diária</h3>
                         <h3>$3120.54</h3>
