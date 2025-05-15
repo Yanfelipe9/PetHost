@@ -1,37 +1,52 @@
 'use client';
 
-import styles from './despesas.module.css'
-import { Card, Input, Select, Button, Space, Table } from "antd";
+import styles from './despesas.module.css';
+import { Card, Input, Select, Button, Space, Table, Pagination, Tag } from "antd";
+import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 
 const DespesasPage = () => {
     const handleChange = value => {
         console.log(`selected ${value}`);
     };
+
     const columns = [
         {
             title: 'Descrição',
-            dataIndex: 'descrição',
-            key: 'descrição',
+            dataIndex: 'descricao',
+            key: 'descricao',
         },
         {
             title: 'Categoria',
             dataIndex: 'categoria',
             key: 'categoria',
+            render: categoria => (
+                <Tag color={categoria === 'Mensal' ? 'blue' : 'red'}>
+                    {categoria}
+                </Tag>
+            )
         },
         {
             title: 'Valor total',
-            dataIndex: 'valor total',
-            key: 'valor total',
+            dataIndex: 'valor',
+            key: 'valor',
         },
         {
-            dataIndex: 'editar',
             key: 'editar',
+            render: () => <EditOutlined style={{ fontSize: 18, cursor: 'pointer' }} />
         },
         {
-            dataIndex: 'deletar',
-            key: 'deletar'
+            key: 'deletar',
+            render: () => <DeleteOutlined style={{ fontSize: 18, cursor: 'pointer' }} />
         }
     ];
+
+    const data = [
+        { key: 1, descricao: 'Salários', categoria: 'Mensal', valor: 'R$ 467,00' },
+        { key: 2, descricao: 'Produtos de limpeza', categoria: 'Custos casuais', valor: 'R$ 467,00' },
+        { key: 3, descricao: 'Manutenção', categoria: 'Custos casuais', valor: 'R$ 467,00' },
+        { key: 4, descricao: 'Luz', categoria: 'Mensal', valor: 'R$ 467,00' },
+    ];
+
     return (
         <main className={styles.container}>
             <div className={styles.cardContainer}>
@@ -46,6 +61,7 @@ const DespesasPage = () => {
                     </div>
                 </div>
                 <div className={styles.select}>
+                    <p>Despesas</p>
                     <Select
                         className={`${styles.select} ant-select`}
                         placeholder="Despesas fixas"
@@ -62,7 +78,7 @@ const DespesasPage = () => {
                 </div>
             </div>
 
-            <Card>
+            <Card className={styles.cardDespesa}>
                 <Space wrap className={styles.cardContainer2}>
                     <Card style={{ background: 'rgba(21, 112, 239, 1)', color: 'white' }}>
                         <h3>Despesa Diária</h3>
@@ -78,11 +94,15 @@ const DespesasPage = () => {
                     </Card>
                 </Space>
             </Card>
-            <Card>
-                <Table columns={columns} />;
+
+            <Card className={styles.table}>
+                <Table columns={columns} dataSource={data} pagination={false} />
+                <div style={{ marginTop: 16, textAlign: 'right' }}>
+                    <Pagination defaultCurrent={1} total={10} />
+                </div>
             </Card>
         </main>
-    )
-}
+    );
+};
 
 export default DespesasPage;
