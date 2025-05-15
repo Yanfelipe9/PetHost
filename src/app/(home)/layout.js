@@ -7,7 +7,8 @@ import {
   BugOutlined,
   AppstoreOutlined,
   DollarOutlined,
-  RiseOutlined
+  RiseOutlined,
+  CalendarOutlined
 } from "@ant-design/icons";
 import { usePathname, useRouter } from "next/navigation";
 import Logo from "@/assets/imgs/logo.png";
@@ -44,6 +45,9 @@ export default function HomeLayout({ children }) {
           <Menu.Item key="/clientes" icon={<LaptopOutlined />}>
             Clientes
           </Menu.Item>
+           <Menu.Item key="/agendamentos" icon={<CalendarOutlined /> }>
+            Agendamentos
+          </Menu.Item>
           <Menu.Item key="/pets" icon={<BugOutlined />}>
             Pets
           </Menu.Item>
@@ -55,9 +59,6 @@ export default function HomeLayout({ children }) {
           </Menu.Item>
           <Menu.Item key="/despesas" icon={<RiseOutlined />}>
             Despesas
-          </Menu.Item>
-          <Menu.Item key="4" icon={<NotificationOutlined />}>
-            Contato
           </Menu.Item>
         </Menu>
       </Sider>

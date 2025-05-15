@@ -4,7 +4,7 @@ import { useAuth } from "@/app/context/AuthContext";
 import api from "@/utils/axios";
 import { Button, Flex, Form, Input, Modal, Pagination, Table } from "antd";
 import { useEffect, useState } from "react";
-import styles from "./clientes.module.css";
+import styles from "./agendamento.module.css";
 import { IMaskInput } from "react-imask";
 
 const columns = [
