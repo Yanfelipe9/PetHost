@@ -6,6 +6,8 @@ import ApexCharts from "apexcharts";
 import styles from "./painel.module.css";
 import api from "@/utils/axios";
 import { count } from "console";
+import { userInfo } from "os";
+import { useAuth } from "@/app/context/AuthContext";
 
 const { Title, Text } = Typography;
 
@@ -17,6 +19,7 @@ interface VisaoGeral {
   countBaiasOcupadas: number;
 }
 export default function Dashboard() {
+   const { user } = useAuth();
   const chartRefBar = useRef(null);
   const chartRefRadial = useRef(null);
   const [fontSize, setFontSize] = useState(window.innerWidth <= 500 ? "8px" : "12px");
@@ -27,6 +30,8 @@ export default function Dashboard() {
     countBaiasDisponiveis: 0,
     countBaiasOcupadas: 0,
   });
+
+  const [statusHotel, setStatusHotel] = useState(0);
 
   // Função para ajustar o fontSize ao redimensionar a tela
   const handleResize = () => {
@@ -45,7 +50,7 @@ export default function Dashboard() {
   useEffect(() => {
     if (chartRefRadial.current) {
       const optionsRadial = {
-        series: [80],
+        series: [statusHotel],
         chart: {
           type: "radialBar",
           height: 180,
@@ -141,20 +146,28 @@ export default function Dashboard() {
   }, [fontSize]); // A dependência foi alterada para "fontSize", assim o gráfico será re-renderizado quando a largura da tela mudar
 
   useEffect(() => {
-    getVisalGeralDados();
-  })
-
-  const getVisalGeralDados = () => {
-    api.get("/visao-geral").then((res) => {
-      if (res.status === 200) {
-        const data = res.data as VisaoGeral;
-        // Aqui você pode usar os dados recebidos para atualizar o estado ou fazer o que precisar
-        setDadosGerais(data);
-      } else {
-        console.error("Erro ao buscar dados da visão geral");
+     if (!user?.userId) return; // Aguarda o userId estar carregado antes de buscar clientes
+      console.log(user?.userId);
+      const getVisalGeralDados = async () => {
+        const dados = await  api.get(`/visao-geral/${user?.userId}`)
+        console.log(dados.data);
+        setDadosGerais(dados.data);
       }
-    });
-  }
+
+    getVisalGeralDados();
+  }, [user?.userId])
+
+
+  useEffect(() => {
+    if (!user?.userId) return; // Aguarda o userId estar carregado antes de buscar clientes
+    const getStatusHotel = async () => {
+      const dados = await api.get("/visao-geral/status-ocupacao/"+user?.userId);
+      setStatusHotel(dados.data);
+    };
+
+    getStatusHotel();
+  }, [user?.userId]);
+ 
 
   const stats = [
     { label: "Check-in", value: dadosGerais.countCheckIn, description: "Hoje" },

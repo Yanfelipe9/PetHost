@@ -100,7 +100,7 @@ const PetTable = () => {
         debugger
         const dtInicio = formatDateToBackendString(values.periodo[0]);
         const dtFim = formatDateToBackendString(values.periodo[1]);
-        
+        console.log("values",values)
         const agendamentoBody = {
           dataHoraInicio: dtInicio,
           dataHoraFim: dtFim,
