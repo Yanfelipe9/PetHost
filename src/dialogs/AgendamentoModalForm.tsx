@@ -32,25 +32,33 @@ export default function AgendamentoFormModalForm({ form, pets, baias }: Agendame
         label="Pesquisar por pet"
         rules={[{ required: true, message: "Informe o nome do pet" }]}
       >
-        <AutoComplete
-            options={pets.map((pet) => ({
-              label: `${pet.nome} - ${pet.racaPet}`,
-              value: `${pet.nome} - ${pet.racaPet}`, // mostra isso no campo
-              petId: pet.id, // armazena o ID junto
-            }))}
-          style={{ width: "100%" }}
-          placeholder="Buscar por nome do pet"
-          allowClear
-          optionFilterProp="label"
-          filterOption={(inputValue, option) =>
-            option?.label
-              ?.toLowerCase()
-              .includes(inputValue.toLowerCase())
-          }
-          onSelect={(value, option) => {
-            form.setFieldsValue({ busca: value, petId: option.petId });
-          }}
-        />
+     <Form.Item name="busca">
+  <AutoComplete
+    options={pets.map((pet) => ({
+      label: `${pet.nome} - ${pet.racaPet}`, // o que aparece no dropdown
+      value: `${pet.nome} - ${pet.racaPet}`, // valor exibido no input
+      petId: pet.id,                         // valor que será salvo separadamente
+    }))}
+    style={{ width: "100%" }}
+    placeholder="Buscar por nome do pet"
+    allowClear
+    value={form.getFieldValue("busca")}
+    optionFilterProp="label"
+    filterOption={(inputValue, option) =>
+      option?.label?.toLowerCase().includes(inputValue.toLowerCase())
+    }
+    onSelect={(label, option) => {
+      form.setFieldsValue({
+        busca: label,               // texto visível no campo
+        petId: option.petId,        // ID salvo separado
+      });
+    }}
+  />
+</Form.Item>
+
+<Form.Item name="petId" hidden>
+  <Input />
+</Form.Item>
       </Form.Item>
 
       <Row gutter={16}>
@@ -65,24 +73,32 @@ export default function AgendamentoFormModalForm({ form, pets, baias }: Agendame
           </Form.Item>
         </Col>
         <Col span={12}>
-        <Form.Item name="baia" label="baia" rules={[{ required: true, message: "Informe a Báia" }]}>
-          <AutoComplete
-            options={baias.map((baia) => ({
-              label: baia.descricao,
-              value: baia.descricao, // exibe descrição no input
-              baiaId: baia.id, // ID real vai junto
-            }))}
-            style={{ width: "100%" }}
-            placeholder="Ex: Canil 3"
-            allowClear
-            filterOption={(inputValue, option) =>
-              option?.label?.toLowerCase().includes(inputValue.toLowerCase())
-            }
-            onSelect={(value, option) => {
-              form.setFieldsValue({ baia: value, baiaId: option.baiaId });
-            }}
-          />
-        </Form.Item>
+      <Form.Item name="baia" label="Báia" rules={[{ required: true, message: "Informe a Báia" }]}>
+  <AutoComplete
+    options={baias.map((baia) => ({
+      label: baia.descricao,       // o que aparece no dropdown
+      value: baia.descricao,       // valor exibido no input
+      baiaId: baia.id              // ID real que será salvo no campo oculto
+    }))}
+    style={{ width: "100%" }}
+    placeholder="Ex: Canil 3"
+    allowClear
+    value={form.getFieldValue("baia")}
+    filterOption={(inputValue, option) =>
+      option?.label?.toLowerCase().includes(inputValue.toLowerCase())
+    }
+    onSelect={(label, option) => {
+      form.setFieldsValue({
+        baia: label,              // texto visível no campo
+        baiaId: option.baiaId     // ID salvo no campo oculto
+      });
+    }}
+  />
+</Form.Item>
+
+<Form.Item name="baiaId" hidden>
+  <Input />
+</Form.Item>
 
         </Col>
       </Row>
