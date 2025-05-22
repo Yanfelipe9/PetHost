@@ -138,20 +138,19 @@ const Baias = () => {
   return (
     <div style={{ padding: 20 }} className={styles.container}>
       <Flex justify="space-between" align="center" className={styles.header}>
-        <Space style={{ marginBottom: 16 }}>
+      <div className={styles.filtroContainer}>
           <Input
             placeholder="Pesquisar por Baia"
             onChange={(e) => {
               setSearchText(e.target.value);
               setCurrentPage(1);
             }}
-            style={{ width: 300 }}
             prefix={<SearchOutlined />}
           />
           <Button icon={<FilterOutlined />} iconPosition={position}>
             Filtrar
           </Button>
-        </Space>
+        </div>
         <Button
           type="primary"
           onClick={showModal}
@@ -166,6 +165,7 @@ const Baias = () => {
           columns={columns}
           dataSource={paginatedBaias}
           pagination={false}
+          scroll={{ x: 'max-content' }}
           rowKey="id"
         />
       </div>

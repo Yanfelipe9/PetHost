@@ -211,6 +211,7 @@ const Agendamentos = () => {
           columns={columns}
           rowKey="id"
           pagination={false}
+          scroll={{ x: 'max-content' }}
         />
       </div>
 
