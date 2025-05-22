@@ -1,51 +1,115 @@
 'use client'
 import React, { useEffect, useState } from "react";
-import { Table, Input, Button, Space, Flex, Modal, Form, Pagination } from "antd"; // Import Pagination here
-import { SearchOutlined, FilterOutlined } from "@ant-design/icons";
+import {
+  Table,
+  Input,
+  Button,
+  Space,
+  Flex,
+  Modal,
+  Form,
+  Pagination,
+  Popconfirm,
+  message,
+} from "antd";
+import {
+  SearchOutlined,
+  FilterOutlined,
+  DeleteOutlined,
+  CheckCircleOutlined,
+} from "@ant-design/icons";
 import styles from "./baias.module.css";
 import api from "@/utils/axios";
 import { useAuth } from "@/app/context/AuthContext";
-
-const columns = [
-  { title: "Baia", dataIndex: "descricao", key: "descricao" },
-  { title: "Status", dataIndex: "status", key: "status" },
-  { title: "Limpeza", dataIndex: "limpeza", key: "limpeza" },
-  { title: "Nome do pet", dataIndex: "pet", key: "pet" },
-];
 
 const Baias = () => {
   const { user } = useAuth();
   const [searchText, setSearchText] = useState("");
   const [baias, setBaias] = useState([]);
-  const [position, setPosition] = useState('start');
+  const [position, setPosition] = useState("start");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [form] = Form.useForm();
-  const [currentPage, setCurrentPage] = useState(1);  // Controle da página atual
-  const pageSize = 10;  // Número de itens por página
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10;
+
+  const fetchBaias = async () => {
+    if (user && user.userId) {
+      try {
+        const response = await api.get(`/baias/${user.userId}`);
+        setBaias(response.data);
+      } catch (error) {
+        console.error("Erro ao buscar baias:", error);
+      }
+    }
+  };
 
   useEffect(() => {
-    if (user && user.userId) {  // Verificando se o user e userId existem
-      const fetchBaias = async () => {
-        try {
-          const response = await api.get(`/baias/${user.userId}`);
-          setBaias(response.data);
-        } catch (error) {
-          console.error("Erro ao buscar baias:", error);
-        }
-      };
-
-      fetchBaias();
-    }
+    fetchBaias();
   }, [user]);
 
-  const showModal = () => setIsModalOpen(true);
+  const handleDelete = async (baiaId) => {
+    try {
+      await api.delete(`/baias/${baiaId}`);
+      setBaias((prev) => prev.filter((baia) => baia.id !== baiaId));
+      message.success("Baia deletada com sucesso!");
+    } catch (error) {
+      console.error("Erro ao deletar baia:", error);
+      message.error("Erro ao deletar baia.");
+    }
+  };
 
+  const handleLimpar = async (baiaId) => {
+    try {
+      const response = await api.post(`/baias/limpeza/${baiaId}`);
+      const baiaAtualizada = response.data;
+
+      setBaias((prev) =>
+        prev.map((baia) => (baia.id === baiaId ? baiaAtualizada : baia))
+      );
+      message.success("Status de limpeza atualizado!");
+    } catch (error) {
+      console.error("Erro ao atualizar limpeza:", error);
+      message.error("Erro ao atualizar limpeza.");
+    }
+  };
+
+  const columns = [
+    { title: "Baia", dataIndex: "descricao", key: "descricao" },
+    { title: "Status", dataIndex: "status", key: "status" },
+    { title: "Limpeza", dataIndex: "limpeza", key: "limpeza" },
+    {
+      title: "Ações",
+      key: "acoes",
+      render: (_, record) => (
+        <Space>
+          <Button
+            type="default"
+            icon={<CheckCircleOutlined />}
+            onClick={() => handleLimpar(record.id)}
+          >
+            Limpar
+          </Button>
+          <Popconfirm
+            title="Deseja deletar esta baia?"
+            onConfirm={() => handleDelete(record.id)}
+            okText="Sim"
+            cancelText="Não"
+          >
+            <Button type="primary" danger icon={<DeleteOutlined />}>
+              Deletar
+            </Button>
+          </Popconfirm>
+        </Space>
+      ),
+    },
+  ];
+
+  const showModal = () => setIsModalOpen(true);
   const handleCancel = () => setIsModalOpen(false);
 
   const handleOk = async () => {
     try {
       const values = await form.validateFields();
-
       const body = {
         userId: user.userId,
         descricao: values.descricao,
@@ -60,18 +124,16 @@ const Baias = () => {
     }
   };
 
-  // Função para lidar com a mudança de página
-  const handlePageChange = (page) => {
-    setCurrentPage(page);
-  };
+  const handlePageChange = (page) => setCurrentPage(page);
 
-  // Filtrar baias com base no texto de busca
   const filteredBaias = baias.filter((baia) =>
     baia.descricao.toLowerCase().includes(searchText.toLowerCase())
   );
 
-  // Obter os dados da página atual
-  const paginatedBaias = filteredBaias.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+  const paginatedBaias = filteredBaias.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize
+  );
 
   return (
     <div style={{ padding: 20 }} className={styles.container}>
@@ -79,7 +141,10 @@ const Baias = () => {
         <Space style={{ marginBottom: 16 }}>
           <Input
             placeholder="Pesquisar por Baia"
-            onChange={(e) => setSearchText(e.target.value)}
+            onChange={(e) => {
+              setSearchText(e.target.value);
+              setCurrentPage(1);
+            }}
             style={{ width: 300 }}
             prefix={<SearchOutlined />}
           />
@@ -104,13 +169,15 @@ const Baias = () => {
           rowKey="id"
         />
       </div>
+
       <div className={styles.paginationContainer}>
-        <Flex justify="center" className={styles.paginationContainer}>
+        <Flex justify="center">
           <Pagination
-            current={currentPage} // Página atual
-            pageSize={pageSize} // Número de itens por página
-            total={filteredBaias.length} // Total de itens
-            onChange={handlePageChange} // Função chamada ao mudar de página
+            current={currentPage}
+            pageSize={pageSize}
+            total={filteredBaias.length}
+            onChange={handlePageChange}
+            showSizeChanger={false}
           />
         </Flex>
       </div>
