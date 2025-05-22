@@ -1,14 +1,69 @@
 'use client';
 
+import { useAuth } from "@/app/context/AuthContext";
+import api from "@/utils/axios";
+import { useState, useEffect } from 'react';
 import styles from './despesas.module.css';
-import { Card, Input, Select, Button, Space, Table, Pagination, Tag } from "antd";
+import { Card, Input, Select, Button, Space, Table, Pagination, Tag, message } from "antd";
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 
 const DespesasPage = () => {
-    const handleChange = value => {
-        console.log(`selected ${value}`);
+    const { user } = useAuth();
+    const [descricao, setDescricao] = useState('');
+    const [valor, setValor] = useState('');
+    const [categoria, setCategoria] = useState('');
+    const [despesas, setDespesas] = useState([]);
+
+    // Carregar despesas do usuário após login
+    useEffect(() => {
+        if (!user?.userId) return;
+
+        const fetchDespesas = async () => {
+            try {
+                const response = await api.get(`/despesas/user/${user.userId}`);
+                setDespesas(response.data);
+            } catch (error) {
+                console.error("Erro ao buscar despesas:", error);
+            }
+        };
+
+        fetchDespesas();
+    }, [user?.userId]);
+
+    // Função para adicionar uma nova despesa
+    const handleOk = async () => {
+        // Validações manuais
+        if (!descricao || !valor || !categoria) {
+            message.error('Por favor, preencha todos os campos!');
+            return;
+        }
+
+        const body = {
+            descricao,
+            valor,
+            categoria,
+            userId: user.userId,
+        };
+
+        try {
+            await api.post("/despesas", body);
+            setDescricao(''); // Limpa o campo de descrição
+            setValor(''); // Limpa o campo de valor
+            setCategoria(''); // Limpa o campo de categoria
+            setDespesas((prev) => [...prev, body]); // Atualiza a lista de despesas
+            message.success("Despesa cadastrada com sucesso!");
+        } catch (error) {
+            console.error("Erro ao cadastrar despesas:", error);
+            message.error("Erro ao cadastrar despesa");
+        }
     };
 
+    // Função para lidar com a mudança da categoria
+    const handleChange = (value) => {
+        setCategoria(value); // Atualiza a categoria selecionada
+    };
+
+    // Definir as colunas da tabela
     const columns = [
         {
             title: 'Descrição',
@@ -19,11 +74,11 @@ const DespesasPage = () => {
             title: 'Categoria',
             dataIndex: 'categoria',
             key: 'categoria',
-            render: categoria => (
+            render: (categoria) => (
                 <Tag color={categoria === 'Mensal' ? 'blue' : 'red'}>
                     {categoria}
                 </Tag>
-            )
+            ),
         },
         {
             title: 'Valor total',
@@ -32,19 +87,12 @@ const DespesasPage = () => {
         },
         {
             key: 'editar',
-            render: () => <EditOutlined style={{ fontSize: 18, cursor: 'pointer' }} />
+            render: () => <EditOutlined style={{ fontSize: 18, cursor: 'pointer' }} />,
         },
         {
             key: 'deletar',
-            render: () => <DeleteOutlined style={{ fontSize: 18, cursor: 'pointer' }} />
-        }
-    ];
-
-    const data = [
-        { key: 1, descricao: 'Salários', categoria: 'Mensal', valor: 'R$ 467,00' },
-        { key: 2, descricao: 'Produtos de limpeza', categoria: 'Custos casuais', valor: 'R$ 467,00' },
-        { key: 3, descricao: 'Manutenção', categoria: 'Custos casuais', valor: 'R$ 467,00' },
-        { key: 4, descricao: 'Luz', categoria: 'Mensal', valor: 'R$ 467,00' },
+            render: () => <DeleteOutlined style={{ fontSize: 18, cursor: 'pointer' }} />,
+        },
     ];
 
     return (
@@ -53,19 +101,28 @@ const DespesasPage = () => {
                 <div className={styles.cardContainer1}>
                     <div>
                         <p className={styles.p1}>Descrição</p>
-                        <Input placeholder="Digite a Descrição" />
+                        <Input
+                            placeholder="Digite a Descrição"
+                            value={descricao}
+                            onChange={(e) => setDescricao(e.target.value)}
+                        />
                     </div>
                     <div>
                         <p className={styles.p1}>Valor</p>
-                        <Input placeholder="Digite o valor" />
+                        <Input
+                            placeholder="Digite o valor"
+                            value={valor}
+                            onChange={(e) => setValor(e.target.value)}
+                        />
                     </div>
                 </div>
                 <div className={styles.select}>
-                    <p>Despesas</p>
+                    <p>Recorrência</p>
                     <Select
                         className={`${styles.select} ant-select`}
                         placeholder="Despesas fixas"
                         onChange={handleChange}
+                        value={categoria || undefined}
                         options={[
                             { value: 'diario', label: 'Diário' },
                             { value: 'semanal', label: 'Semanal' },
@@ -74,7 +131,9 @@ const DespesasPage = () => {
                     />
                 </div>
                 <div className={styles.cardContainerButton}>
-                    <Button type="primary">Adicionar despesa</Button>
+                    <Button type="primary" onClick={handleOk}>
+                        Adicionar despesa
+                    </Button>
                 </div>
             </div>
 
@@ -96,9 +155,9 @@ const DespesasPage = () => {
             </Card>
 
             <Card className={styles.table}>
-                <Table columns={columns} dataSource={data} pagination={false} />
+                <Table columns={columns} dataSource={despesas} pagination={false} />
                 <div style={{ marginTop: 16, textAlign: 'right' }}>
-                    <Pagination defaultCurrent={1} total={10} />
+                    <Pagination defaultCurrent={1} total={despesas.length} />
                 </div>
             </Card>
         </main>
