@@ -27,6 +27,13 @@
     margin-bottom: 20px;
 }
 
+
+.filtroContainer {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
 .cabecalho {
   display: flex;
   gap: 16px;
