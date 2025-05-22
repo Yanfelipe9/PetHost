@@ -102,17 +102,21 @@ const FinanceiroPage = () => {
   }, [activeTab]);
   
 
-  const filteredData = agendamentos.filter(
+  const filteredData = agendamentos ?  agendamentos.filter(
     (item) =>
-      item.petNome.toLowerCase().includes(searchText.toLowerCase()) ||
-      item.baia.toLowerCase().includes(searchText.toLowerCase())
-  );
+      item.pet.nome?.toLowerCase().includes(searchText.toLowerCase()) ||
+      item.baia.descricao?.toLowerCase().includes(searchText.toLowerCase())
+  ) :  [];
 
   const columns = [
     { title: "ID", dataIndex: "id", key: "id" },
-    { title: "Nome do Pet", dataIndex: "petNome", key: "petNome" },
-    { title: "Baia", dataIndex: "baia", key: "baia" },
-    { title: "Valor", dataIndex: "valor", key: "valor" },
+    { title: "Nome do Pet",   dataIndex: ["pet", "nome"], key:  ["pet", "nome"] },
+    { title: "Baia", dataIndex:  ["baia","descricao"], key:  ["baia","descricao"] },
+    { title: "Valor", dataIndex: "valor", key: "valor",
+      render: (text) => {
+        return <span> R${text}</span>;
+      }
+     },
     { title: "Status", dataIndex: "statusPagamento", key: "statusPagamento" },
     { title: "Forma de Pagamento", dataIndex: "formaPagamento", key: "formaPagamento" },
   ];
