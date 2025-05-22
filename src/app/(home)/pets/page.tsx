@@ -4,7 +4,7 @@ import { useAuth } from "@/app/context/AuthContext";
 import AgendamentoFormModalForm from "@/dialogs/AgendamentoModalForm";
 import PetFormModalForm from "@/dialogs/PetFormModalForm";
 import api from "@/utils/axios";
-import { SearchOutlined } from "@ant-design/icons";
+import { SearchOutlined, DeleteOutlined } from "@ant-design/icons";
 import {
   Button,
   Flex,
@@ -14,6 +14,7 @@ import {
   message,
   Modal,
   Pagination,
+  Popconfirm,
   Select,
   Space,
   Table,
@@ -134,6 +135,17 @@ const PetTable = () => {
     }
   };
 
+  const handleDelete = async (petId) => {
+    try {
+      await api.delete(`/pets/${petId}`);
+      setPets((prev) => prev.filter((pet) => pet.id !== petId));
+      message.success("Pet deleado com sucesso!");
+    } catch (error) {
+      console.error("Erro ao deletar pet:", error);
+      message.error("Erro ao deletar pet.");
+    }
+  };
+
 
   function formatDateToBackendString(dateObj) {
     const pad = (num) => String(num).padStart(2, '0');
@@ -170,6 +182,24 @@ const PetTable = () => {
       key: "telefoneDono",
     },
     { title: "Observações", dataIndex: "observacoes", key: "observacoes" },
+    {
+      title: "Ações",
+      key: "acoes",
+      render: (_, record) => (
+        <Space>
+          <Popconfirm
+            title="Deseja deletar esse pet?"
+            onConfirm={() => handleDelete(record.id)}
+            okText="Sim"
+            cancelText="Não"
+          >
+            <Button type="primary" danger icon={<DeleteOutlined />}>
+              Deletar
+            </Button>
+          </Popconfirm>
+        </Space>
+      ),
+    },
   ];
 
   const fetchClientes = async () => {
@@ -239,16 +269,15 @@ const PetTable = () => {
   return (
     <div className={styles.container} style={{ padding: 20 }}>
       <Flex justify="space-between" align="flex-start" className={styles.header}>
-        <Space style={{ marginBottom: 16 }}>
+        <div className={styles.filtroContainer}>
           <Input
             placeholder="Pesquisar por Nome do Pet"
             onChange={onChange}
-            style={{ width: 300 }}
             prefix={<SearchOutlined />}
           />
           <Select
             placeholder="Filtrar por Sexo"
-            style={{ width: 150 }}
+            className={styles.select}
             onChange={onSexoChange}
             allowClear
             options={[
@@ -256,13 +285,13 @@ const PetTable = () => {
               { value: "FEMEA", label: "Fêmea" },
             ]}
           />
-        </Space>
+        </div>
         <Button type="primary" onClick={showModal} className={styles.createButton}>
           Criar
         </Button>
       </Flex>
 
-      <Table columns={columns} dataSource={pets || []} pagination={false} rowKey="id" />
+      <Table columns={columns} dataSource={pets || []} pagination={false} rowKey="id" scroll={{ x: 'max-content' }} />
 
       <div className={styles.paginationContainer}>
         <Flex justify="center">
