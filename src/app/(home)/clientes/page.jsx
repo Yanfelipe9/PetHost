@@ -2,15 +2,14 @@
 
 import { useAuth } from "@/app/context/AuthContext";
 import api from "@/utils/axios";
-import { Button, Flex, Form, Input, Modal, Pagination, Table } from "antd";
+import { Button, Flex, Form, Input, Modal, Pagination, Popconfirm, Table } from "antd";
 import { useEffect, useState } from "react";
 import styles from "./clientes.module.css";
 import { IMaskInput } from "react-imask";
+import {
+  DeleteOutlined,
+} from "@ant-design/icons";
 
-const columns = [
-  { title: "Nome", dataIndex: "nome", key: "nome" },
-  { title: "Telefone", dataIndex: "telefone", key: "telefone" },
-];
 
 const Clientes = () => {
   const { user } = useAuth();
@@ -56,13 +55,40 @@ const Clientes = () => {
     }
   };
 
-  const handleChange = (e) => {
-    const maskedValue = IMask.createMask({
-      mask: "(00) 00000-0000",
-    }).resolve(e.target.value);
 
-    setPhone(maskedValue);
-  };
+  const handleDelete = async (clienteId) => {
+    try {
+      await api.delete(`/clientes/${clienteId}`);
+      setClientes((prev) => prev.filter((cliente) => cliente.id !== clienteId));
+      
+    } catch (error) {
+      console.error("Erro ao deletar cliente:", error);
+    }
+  }
+
+const columns = [
+  { title: "Nome", dataIndex: "nome", key: "nome" },
+  { title: "Telefone", dataIndex: "telefone", key: "telefone" },
+   {
+      title: "Ações",
+      key: "acoes",
+      render: (_, record) => (
+        
+          <Popconfirm
+            title="Deseja deletar este cliente?"
+            onConfirm={() => handleDelete(record.id)}
+            okText="Sim"
+            cancelText="Não"
+          >
+            <Button type="primary" danger icon={<DeleteOutlined />}>
+              Deletar
+            </Button>
+          </Popconfirm>
+        
+      ),
+    },
+];
+
   return (
     <div className={styles.container}>
       <Flex justify="space-between" align="center" className={styles.header}>

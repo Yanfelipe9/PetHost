@@ -18,6 +18,11 @@ interface VisaoGeral {
   countBaiasDisponiveis: number;
   countBaiasOcupadas: number;
 }
+
+interface statusMensal {
+  mes: string;
+  percentualOcupacao: number;
+}
 export default function Dashboard() {
    const { user } = useAuth();
   const chartRefBar = useRef(null);
@@ -32,6 +37,7 @@ export default function Dashboard() {
   });
 
   const [statusHotel, setStatusHotel] = useState(0);
+  const [statusMensal, setStatusMensal] = useState<statusMensal[]>([]);
 
   // Função para ajustar o fontSize ao redimensionar a tela
   const handleResize = () => {
@@ -89,14 +95,14 @@ export default function Dashboard() {
 
       return () => chartRadial.destroy();
     }
-  }, []);
+  }, [statusHotel]);
 
   useEffect(() => {
     if (chartRefBar.current) {
       const optionsBar = {
         series: [
           {
-            data: [70, 40, 60, 75, 95, 30, 65, 85, 90, 88, 92, 96],
+            data: getArrayStatusMensal(),
           },
         ],
         chart: {
@@ -143,7 +149,7 @@ export default function Dashboard() {
 
       return () => chartBar.destroy();
     }
-  }, [fontSize]); // A dependência foi alterada para "fontSize", assim o gráfico será re-renderizado quando a largura da tela mudar
+  }, [fontSize,statusMensal]); // A dependência foi alterada para "fontSize", assim o gráfico será re-renderizado quando a largura da tela mudar
 
   useEffect(() => {
      if (!user?.userId) return; // Aguarda o userId estar carregado antes de buscar clientes
@@ -165,9 +171,25 @@ export default function Dashboard() {
       setStatusHotel(dados.data);
     };
 
+    const getStatusMensal = async () => {
+      const dados = await api.get("/visao-geral/ocupacao-mensal",{
+        params: {
+          userId: user?.userId,
+        },
+      });
+      console.log(dados.data);
+      setStatusMensal(dados.data);
+    }
+
     getStatusHotel();
+    getStatusMensal();
   }, [user?.userId]);
  
+  const getArrayStatusMensal = () => {
+    const arrayStatusMensal = statusMensal.map((item) => item.percentualOcupacao);
+    console.log(arrayStatusMensal);
+    return arrayStatusMensal;
+  }
 
   const stats = [
     { label: "Check-in", value: dadosGerais.countCheckIn, description: "Hoje" },
