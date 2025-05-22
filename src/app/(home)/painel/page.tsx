@@ -296,7 +296,7 @@ export default function Dashboard() {
                 Baias Limpas
               </Text>
               <div>
-                <strong>{detalhesBaias.totalLimpas}</strong>
+                <strong>{detalhesBaias?.totalLimpas}</strong>
               </div>
             </Col>
             <Col span={12}>
@@ -304,7 +304,7 @@ export default function Dashboard() {
                 Baias Sujas
               </Text>
               <div>
-                <strong>{detalhesBaias.totalSujas}</strong>
+                <strong>{detalhesBaias?.totalSujas}</strong>
               </div>
             </Col>
           </Row>

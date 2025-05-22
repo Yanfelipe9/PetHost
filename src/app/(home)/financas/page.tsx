@@ -36,8 +36,17 @@ const FinanceiroPage = () => {
         setLoading(false);
       }
     };
+      const detalhes = async () => {
+            try {
+                const response = await api.get(`/visao-geral/detalhes-saldo/${user.userId}`);
+                console.log(response.data);
+            } catch (error) {
+                console.error("Erro ao buscar detalhes:", error);
+            }
+        }
 
     fetchAgendamentos();
+    detalhes();
   }, [user?.userId]);
 
   useEffect(() => {

@@ -27,6 +27,7 @@ const DespesasPage = () => {
             }
         };
 
+
         fetchDespesas();
     }, [user?.userId]);
 
