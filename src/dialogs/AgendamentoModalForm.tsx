@@ -9,22 +9,29 @@ import {
   Col,
   DatePicker,
   Form,
+  FormInstance,
   Input,
   Row,
   Select,
 } from "antd";
+import dayjs from "dayjs";
+import { useEffect } from "react";
 
 interface Baia {
   id: number;
   descricao: string;
 }
 interface AgendamentoFormProps {
-  form: any;
+  form: FormInstance;
   pets: PetInfoInterface[];
   baias: Baia[]
 }
 
 export default function AgendamentoFormModalForm({ form, pets, baias }: AgendamentoFormProps) {
+
+  // useEffect(() => {
+  //   form.setFieldValue("periodo", [dayjs("2024-12-31"), dayjs("2024-01-01")]);
+  // })
   return (
     <Form form={form} layout="vertical">
       <Form.Item
@@ -34,6 +41,7 @@ export default function AgendamentoFormModalForm({ form, pets, baias }: Agendame
       >
      <Form.Item name="busca">
   <AutoComplete
+    id="pet"
     options={pets.map((pet) => ({
       label: `${pet.nome} - ${pet.racaPet}`, // o que aparece no dropdown
       value: `${pet.nome} - ${pet.racaPet}`, // valor exibido no input
@@ -63,7 +71,23 @@ export default function AgendamentoFormModalForm({ form, pets, baias }: Agendame
 
       <Row gutter={16}>
         <Col span={12}>
-          <Form.Item name="periodo" label="Período de estadia"  rules={[{ required: true, message: "Informe a estadia" }]}>
+          <Form.Item 
+            name="periodo" 
+            label="Período de estadia"  
+            rules={[
+              { required: true, message: "Informe a estadia" },
+                 {
+                  validator: (_, value) => {
+                    if (!value || value.length !== 2) return Promise.resolve();
+                    const [start, end] = value;
+                    if (start && end && start.isAfter(end)) {
+                      return Promise.reject(new Error('Data de início não pode ser maior que a data de término'));
+                    }
+                    return Promise.resolve();
+                  },
+                },
+            ]}
+          >
             <DatePicker.RangePicker
               style={{ width: "100%" }}
               format="DD/MM/YYYY"
@@ -75,6 +99,7 @@ export default function AgendamentoFormModalForm({ form, pets, baias }: Agendame
         <Col span={12}>
       <Form.Item name="baia" label="Báia" rules={[{ required: true, message: "Informe a Báia" }]}>
   <AutoComplete
+    id="baia"
     options={baias.map((baia) => ({
       label: baia.descricao,       // o que aparece no dropdown
       value: baia.descricao,       // valor exibido no input
@@ -105,8 +130,25 @@ export default function AgendamentoFormModalForm({ form, pets, baias }: Agendame
 
       <Row gutter={16}>
         <Col span={12}>
-          <Form.Item name="valor" label="Valor"  rules={[{ required: true, message: "Informe o valor" }]}>
+          <Form.Item name="valor" label="Valor"  rules={[
+            { required: true, message: "Informe o valor" },
+            {
+              validator: (_, value) => {
+                if (value === undefined || value === null || value === "") {
+                  return Promise.resolve(); // já tratado por `required`
+                }
+                if (isNaN(value)) {
+                  return Promise.reject(new Error("O valor deve ser um número"));
+                }
+                if (parseFloat(value) <= 0) {
+                  return Promise.reject(new Error("O valor deve ser maior que zero"));
+                }
+                return Promise.resolve();
+              },
+            },
+          ]}>
             <Input
+              id="valor"
               type="number"
               prefix="R$"
               addonBefore={<DollarOutlined />}
@@ -117,6 +159,7 @@ export default function AgendamentoFormModalForm({ form, pets, baias }: Agendame
         <Col span={12} >
           <Form.Item name="pagamento" label="Forma de pagamento"  rules={[{ required: true, message: "Informe a forma de pagamento" }]}>
             <Select
+              id="pagamento"
               placeholder="Selecione"
               options={[
                 { value: "DINHEIRO", label: "Dinheiro" },

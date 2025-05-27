@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Table, Button, Modal, Form, Tag, Flex, Pagination } from "antd";
+import { Table, Button, Modal, Form, Tag, Flex, Pagination, message } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import api from "@/utils/axios";
@@ -78,10 +78,15 @@ const Agendamentos = () => {
         userId: user.userId,
       };
 
-      await api.post("/agendamentos", body);
+      api.post("/agendamentos", body).then((res) => {
+        message.success("Agendamento criado com sucesso!");
+        fetchAgendamentos();
+      }).catch((err) => {
+        message.error("Erro ao criar agendamento!");
+        console.error(err);
+      });
       form.resetFields();
       setIsModalOpen(false);
-      fetchAgendamentos();
     } catch (error) {
       console.error("Erro ao criar agendamento:", error);
     }
