@@ -13,27 +13,42 @@ const DespesasPage = () => {
     const [valor, setValor] = useState('');
     const [categoria, setCategoria] = useState('');
     const [despesas, setDespesas] = useState([]);
+    const [DespesasDiarias, setDD] = useState(0);
+    const [DespesasSemanais, setDS] = useState(0);
+    const [DespesasMensais, setDM] = useState(0);
 
-    // Carregar despesas do usuário após login
-    useEffect(() => {
+    const fetchDespesas = async () => {
         if (!user?.userId) return;
 
-        const fetchDespesas = async () => {
-            try {
-                const response = await api.get(`/despesas/user/${user.userId}`);
-                setDespesas(response.data);
-            } catch (error) {
-                console.error("Erro ao buscar despesas:", error);
-            }
-        };
+        try {
+            const response = await api.get(`/despesas/user/${user.userId}`);
+            const data = response.data;
+            setDespesas(data);
 
+            const totalDiarias = data
+                .filter((item) => item.categoria.toLowerCase() === 'diario')
+                .reduce((acc, item) => acc + parseFloat(item.valor), 0);
+            const totalSemanais = data
+                .filter((item) => item.categoria.toLowerCase() === 'semanal')
+                .reduce((acc, item) => acc + parseFloat(item.valor), 0);
+            const totalMensais = data
+                .filter((item) => item.categoria.toLowerCase() === 'mensal')
+                .reduce((acc, item) => acc + parseFloat(item.valor), 0);
 
+            setDD(totalDiarias);
+            setDS(totalSemanais);
+            setDM(totalMensais);
+
+        } catch (error) {
+            console.error("Erro ao buscar despesas:", error);
+        }
+    };
+
+    useEffect(() => {
         fetchDespesas();
     }, [user?.userId]);
 
-    // Função para adicionar uma nova despesa
     const handleOk = async () => {
-        // Validações manuais
         if (!descricao || !valor || !categoria) {
             message.error('Por favor, preencha todos os campos!');
             return;
@@ -48,16 +63,18 @@ const DespesasPage = () => {
 
         try {
             await api.post("/despesas", body);
-            setDescricao(''); // Limpa o campo de descrição
-            setValor(''); // Limpa o campo de valor
-            setCategoria(''); // Limpa o campo de categoria
-            setDespesas((prev) => [...prev, body]); // Atualiza a lista de despesas
             message.success("Despesa cadastrada com sucesso!");
+            setDescricao('');
+            setValor('');
+            setCategoria('');
+
+            await fetchDespesas(); // ✅ Agora funciona corretamente
         } catch (error) {
             console.error("Erro ao cadastrar despesas:", error);
             message.error("Erro ao cadastrar despesa");
         }
     };
+
 
     // Função para lidar com a mudança da categoria
     const handleChange = (value) => {
@@ -142,15 +159,15 @@ const DespesasPage = () => {
                 <Space wrap className={styles.cardContainer2}>
                     <Card style={{ background: 'rgba(21, 112, 239, 1)', color: 'white' }}>
                         <h3>Despesa Diária</h3>
-                        <h3>$3120.54</h3>
+                        <h3>${DespesasDiarias?.toFixed(2)}</h3>
                     </Card>
                     <Card style={{ background: 'rgba(21, 112, 239, 1)', color: 'white' }}>
                         <h3>Despesa Semanal</h3>
-                        <h3>$3120.54</h3>
+                        <h3>${DespesasSemanais?.toFixed(2)}</h3>
                     </Card>
                     <Card style={{ background: 'rgba(21, 112, 239, 1)', color: 'white' }}>
                         <h3>Despesas Mensal</h3>
-                        <h3>$3120.54</h3>
+                        <h3>${DespesasMensais?.toFixed(2)}</h3>
                     </Card>
                 </Space>
             </Card>
