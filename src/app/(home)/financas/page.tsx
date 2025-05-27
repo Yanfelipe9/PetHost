@@ -172,13 +172,7 @@ const FinanceiroPage = () => {
           </div>
 
           {/* Grafico de barra de entradas e despesas */}
-        </TabPane>
-
-        <TabPane tab="Finanças" key="financas">
-          <Flex justify="space-between" align="flex-start" className={styles.header}>
-          <div className={styles.filtroContainer}>
-
-        <Flex justify="space-between" align="flex-start" className={styles.header}>
+           <Flex justify="space-between" align="flex-start" className={styles.header}>
             <Space style={{ marginBottom: 16 }}>
               <Input
                 placeholder="Pesquisar por Nome ou Baia"
@@ -186,21 +180,19 @@ const FinanceiroPage = () => {
                 prefix={<SearchOutlined />}
               />
               <Button icon={<FilterOutlined />}>Filtrar</Button>
-          </div>
+            </Space>
           </Flex>
 
-          {loading ? (
-            <Spin />
-          ) : (
-            <Table
+           <Table
               columns={columns}
               dataSource={filteredData}
               pagination={{ pageSize: 5 }}
               rowKey="id"
               scroll={{ x: 'max-content' }}
             />
-          )}
         </TabPane>
+
+    
       </Tabs>
     </div>
   );
