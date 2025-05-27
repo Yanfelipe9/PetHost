@@ -39,7 +39,7 @@ export interface PetInfoInterface {
 }
 
 const PetTable = () => {
-  const { user } = useAuth();
+  const { user,getUser } = useAuth();
   const [searchText, setSearchText] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("cadastro");
@@ -221,12 +221,13 @@ const PetTable = () => {
   };
 
   const handleSearch = async (value) => {
+    console.log("Buscando pets com nome:", value);
     try {
       const response = await api.get(`/pets`, {
         params: {
           nome: value,
           sexo: filterSexo,
-          userId: user?.userId,
+          userId: getUser()?.userId,
         },
       });
       setPets(response.data);
