@@ -18,11 +18,22 @@ interface VisaoGeral {
   countBaiasDisponiveis: number;
   countBaiasOcupadas: number;
 }
+
+interface statusMensal {
+  mes: string;
+  percentualOcupacao: number;
+}
+interface DetalhesBaias {
+  totalLimpas: number;
+  totalSujas: number;
+}
 export default function Dashboard() {
-   const { user } = useAuth();
+  const { user } = useAuth();
   const chartRefBar = useRef(null);
   const chartRefRadial = useRef(null);
-  const [fontSize, setFontSize] = useState(window.innerWidth <= 500 ? "8px" : "12px");
+  const [fontSize, setFontSize] = useState(
+    window.innerWidth <= 500 ? "8px" : "12px"
+  );
   const [dadosGerais, setDadosGerais] = useState<VisaoGeral>({
     countCheckIn: 0,
     countCheckOut: 0,
@@ -32,6 +43,8 @@ export default function Dashboard() {
   });
 
   const [statusHotel, setStatusHotel] = useState(0);
+  const [statusMensal, setStatusMensal] = useState<statusMensal[]>([]);
+  const [detalhesBaias, setDetalhesBaias] = useState<DetalhesBaias>();
 
   // Função para ajustar o fontSize ao redimensionar a tela
   const handleResize = () => {
@@ -89,14 +102,14 @@ export default function Dashboard() {
 
       return () => chartRadial.destroy();
     }
-  }, []);
+  }, [statusHotel]);
 
   useEffect(() => {
     if (chartRefBar.current) {
       const optionsBar = {
         series: [
           {
-            data: [70, 40, 60, 75, 95, 30, 65, 85, 90, 88, 92, 96],
+            data: getArrayStatusMensal(),
           },
         ],
         chart: {
@@ -113,8 +126,18 @@ export default function Dashboard() {
         dataLabels: { enabled: false },
         xaxis: {
           categories: [
-            "Jan", "Fev", "Mar", "Abr", "Mai", "Jun",
-            "Jul", "Ago", "Set", "Out", "Nov", "Dez",
+            "Jan",
+            "Fev",
+            "Mar",
+            "Abr",
+            "Mai",
+            "Jun",
+            "Jul",
+            "Ago",
+            "Set",
+            "Out",
+            "Nov",
+            "Dez",
           ],
           labels: {
             style: {
@@ -143,38 +166,81 @@ export default function Dashboard() {
 
       return () => chartBar.destroy();
     }
-  }, [fontSize]); // A dependência foi alterada para "fontSize", assim o gráfico será re-renderizado quando a largura da tela mudar
+  }, [fontSize, statusMensal]); // A dependência foi alterada para "fontSize", assim o gráfico será re-renderizado quando a largura da tela mudar
 
   useEffect(() => {
-     if (!user?.userId) return; // Aguarda o userId estar carregado antes de buscar clientes
-      console.log(user?.userId);
-      const getVisalGeralDados = async () => {
-        const dados = await  api.get(`/visao-geral/${user?.userId}`)
-        console.log(dados.data);
-        setDadosGerais(dados.data);
-      }
+    if (!user?.userId) return; // Aguarda o userId estar carregado antes de buscar clientes
+    console.log(user?.userId);
+    const getVisalGeralDados = async () => {
+      const dados = await api.get(`/visao-geral/${user?.userId}`);
+      console.log(dados.data);
+      setDadosGerais(dados.data);
+    };
 
     getVisalGeralDados();
-  }, [user?.userId])
-
+  }, [user?.userId]);
 
   useEffect(() => {
     if (!user?.userId) return; // Aguarda o userId estar carregado antes de buscar clientes
     const getStatusHotel = async () => {
-      const dados = await api.get("/visao-geral/status-ocupacao/"+user?.userId);
+      const dados = await api.get(
+        "/visao-geral/status-ocupacao/" + user?.userId
+      );
       setStatusHotel(dados.data);
     };
 
+    const getStatusMensal = async () => {
+      const dados = await api.get("/visao-geral/ocupacao-mensal", {
+        params: {
+          userId: user?.userId,
+        },
+      });
+      console.log(dados.data);
+      setStatusMensal(dados.data);
+    };
+
+    const getBaiasDetalhes = async () => {
+      try {
+        const data = await api.get("/baias/status/" + user?.userId);
+
+        setDetalhesBaias(data.data as DetalhesBaias);
+      } catch (error) {}
+    };
+    getBaiasDetalhes();
     getStatusHotel();
+    getStatusMensal();
   }, [user?.userId]);
- 
+
+  const getArrayStatusMensal = () => {
+    const arrayStatusMensal = statusMensal.map(
+      (item) => item.percentualOcupacao
+    );
+    console.log(arrayStatusMensal);
+    return arrayStatusMensal;
+  };
 
   const stats = [
     { label: "Check-in", value: dadosGerais.countCheckIn, description: "Hoje" },
-    { label: "Check-out", value: dadosGerais.countCheckOut, description: "Hoje" },
-    { label: "No hotel", value: dadosGerais.countTotaHospedadoHotel, description: "Total" },
-    { label: "Baias disponíveis", value: dadosGerais.countBaiasDisponiveis, description: "Total" },
-    { label: "Baias ocupadas", value: dadosGerais.countBaiasOcupadas, description: "Total" },
+    {
+      label: "Check-out",
+      value: dadosGerais.countCheckOut,
+      description: "Hoje",
+    },
+    {
+      label: "No hotel",
+      value: dadosGerais.countTotaHospedadoHotel,
+      description: "Total",
+    },
+    {
+      label: "Baias disponíveis",
+      value: dadosGerais.countBaiasDisponiveis,
+      description: "Total",
+    },
+    {
+      label: "Baias ocupadas",
+      value: dadosGerais.countBaiasOcupadas,
+      description: "Total",
+    },
   ];
 
   return (
@@ -222,40 +288,24 @@ export default function Dashboard() {
             style={{ fontSize: "20px" }}
             className={styles.sectionTitle}
           >
-            Status das baias
+            Detalhes das baias
           </Title>
           <Row>
             <Col span={12}>
               <Text type="secondary" style={{ fontSize: "16px" }}>
-                Baias ocupadas
+                Baias Limpas
               </Text>
               <div>
-                <strong>104</strong>
+                <strong>{detalhesBaias?.totalLimpas}</strong>
               </div>
-              <Text type="secondary" style={{ fontSize: "16px" }}>
-                Limpas
-              </Text>
-              <div>90</div>
-              <Text type="secondary" style={{ fontSize: "16px" }}>
-                Sujas
-              </Text>
-              <div>4</div>
             </Col>
             <Col span={12}>
               <Text type="secondary" style={{ fontSize: "16px" }}>
-                Baias disponíveis
+                Baias Sujas
               </Text>
               <div>
-                <strong>20</strong>
+                <strong>{detalhesBaias?.totalSujas}</strong>
               </div>
-              <Text type="secondary" style={{ fontSize: "16px" }}>
-                Limpas
-              </Text>
-              <div>30</div>
-              <Text type="secondary" style={{ fontSize: "16px" }}>
-                Sujas
-              </Text>
-              <div>19</div>
             </Col>
           </Row>
         </Card>
