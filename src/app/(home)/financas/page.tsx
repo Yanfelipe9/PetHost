@@ -1,15 +1,13 @@
 'use client'
-import React, { useEffect, useRef, useState } from "react";
-import { Table, Input, Button, Space, Flex, Tabs, message, Spin, Card, Typography } from "antd";
-import { SearchOutlined, FilterOutlined } from "@ant-design/icons";
-import styles from './financas.module.css';
-import api from "@/utils/axios";
 import { useAuth } from "@/app/context/AuthContext";
+import img from '@/assets/imgs/Group 48095478.png';
+import api from "@/utils/axios";
+import { FilterOutlined, SearchOutlined } from "@ant-design/icons";
+import { Button, Card, Flex, Input, message, Space, Spin, Table, Tabs, Typography } from "antd";
 import ApexCharts from "apexcharts";
-import FullCalendar from '@fullcalendar/react'
-import dayGridPlugin from '@fullcalendar/daygrid' // a plugin!
-import img from '@/assets/imgs/Group 48095478.png'
 import Image from "next/image";
+import { useEffect, useRef, useState } from "react";
+import styles from './financas.module.css';
 
 const { TabPane } = Tabs;
 const { Title } = Typography;
@@ -18,8 +16,8 @@ interface DetalhesSaldo {
   entrada: number;
   saida: number;
   saldoLiquido: number;
-
 }
+
 const FinanceiroPage = () => {
   const { user } = useAuth();
   const [searchText, setSearchText] = useState("");
@@ -45,14 +43,13 @@ const FinanceiroPage = () => {
     };
 
     const detalhes = async () => {
-            try {
-                const response = await api.get(`/visao-geral/detalhes-saldo/${user.userId}`);
-                console.log(response.data);
-                setDetalhesSaldo(response.data);
-            } catch (error) {
-                console.error("Erro ao buscar detalhes:", error);
-            }
-        }
+      try {
+        const response = await api.get(`/visao-geral/detalhes-saldo/${user.userId}`);
+        setDetalhesSaldo(response.data);
+      } catch (error) {
+        console.error("Erro ao buscar detalhes:", error);
+      }
+    };
 
     fetchAgendamentos();
     detalhes();
@@ -60,7 +57,7 @@ const FinanceiroPage = () => {
 
   useEffect(() => {
     let chart;
-  
+
     if (activeTab === "painel") {
       setTimeout(() => {
         if (chartRef.current) {
@@ -73,7 +70,7 @@ const FinanceiroPage = () => {
               type: 'bar',
               height: 350
             },
-            colors: ['rgba(47, 41, 43, 1)', "rgba(0, 122, 255, 1)"], // verde para Entradas, vermelho para Despesas
+            colors: ['rgba(47, 41, 43, 1)', "rgba(0, 122, 255, 1)"],
             plotOptions: {
               bar: {
                 horizontal: false,
@@ -107,36 +104,53 @@ const FinanceiroPage = () => {
               }
             }
           };
-  
+
           chart = new ApexCharts(chartRef.current, options);
           chart.render();
         }
-      }, 100); // espera 100ms até o DOM estar pronto
+      }, 100);
     }
-  
+
     return () => {
       if (chart) chart.destroy();
     };
   }, [activeTab]);
-  
 
-  const filteredData = agendamentos ?  agendamentos.filter(
+  const filteredData = agendamentos ? agendamentos.filter(
     (item) =>
       item.pet.nome?.toLowerCase().includes(searchText.toLowerCase()) ||
       item.baia.descricao?.toLowerCase().includes(searchText.toLowerCase())
-  ) :  [];
+  ) : [];
+
+  const handleDelete = async (id) => {
+    try {
+      await api.delete(`/agendamentos/${id}`);
+      message.success("Agendamento deletado com sucesso!");
+      setAgendamentos(prev => prev.filter(item => item.id !== id));
+    } catch (error) {
+      message.error("Erro ao deletar agendamento");
+    }
+  };
 
   const columns = [
     { title: "ID", dataIndex: "id", key: "id" },
-    { title: "Nome do Pet",   dataIndex: ["pet", "nome"], key:  ["pet", "nome"] },
-    { title: "Baia", dataIndex:  ["baia","descricao"], key:  ["baia","descricao"] },
-    { title: "Valor", dataIndex: "valor", key: "valor",
-      render: (text) => {
-        return <span> R${text}</span>;
-      }
-     },
+    { title: "Nome do Pet", dataIndex: ["pet", "nome"], key: ["pet", "nome"] },
+    { title: "Baia", dataIndex: ["baia", "descricao"], key: ["baia", "descricao"] },
+    {
+      title: "Valor", dataIndex: "valor", key: "valor",
+      render: (text) => <span> R${text}</span>
+    },
     { title: "Status", dataIndex: "statusPagamento", key: "statusPagamento" },
     { title: "Forma de Pagamento", dataIndex: "formaPagamento", key: "formaPagamento" },
+    {
+      title: "Ações",
+      key: "acoes",
+      render: (_text, record) => (
+        <Button danger onClick={() => handleDelete(record.id)}>
+          Deletar
+        </Button>
+      ),
+    },
   ];
 
   return (
@@ -146,32 +160,32 @@ const FinanceiroPage = () => {
           <div className={styles.cabecalho}>
             <Card style={{ width: '30%', background: 'rgba(21, 112, 239, 1)', color: 'white' }}>
               <h3>Saldo Liquido</h3>
-              <Title style={{  color: 'white' }}>R$ {detalhesSaldo?.saldoLiquido}</Title>
+              <Title style={{ color: 'white' }}>R$ {detalhesSaldo?.saldoLiquido}</Title>
             </Card>
             <div className={styles.entrada_despesas}>
-              <Card style={{ background: 'rgba(21, 112, 239, 1)', color: 'white', flex: 1}}>
+              <Card style={{ background: 'rgba(21, 112, 239, 1)', color: 'white', flex: 1 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
                   <Image src={img} alt="icone" width={50} height={50} />
                   <div>
-                  <h3 style={{ color: 'white', margin: 0 }}>Entrada</h3>
+                    <h3 style={{ color: 'white', margin: 0 }}>Entrada</h3>
                     <Title level={4} style={{ color: 'white', margin: 0 }}>R$ {detalhesSaldo?.entrada}</Title>
                   </div>
                 </div>
               </Card>
 
-              <Card style={{background: 'rgba(21, 112, 239, 1)', color: 'white' , flex: 1}}>
+              <Card style={{ background: 'rgba(21, 112, 239, 1)', color: 'white', flex: 1 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
                   <Image src={img} alt="icone" width={50} height={50} />
                   <div>
                     <h3 style={{ color: 'white', margin: 0 }}>Despesas</h3>
-                    <Title level={4} style={{  color: 'white' }}>R$ {detalhesSaldo?.saida}</Title>
+                    <Title level={4} style={{ color: 'white' }}>R$ {detalhesSaldo?.saida}</Title>
                   </div>
                 </div>
               </Card>
             </div>
           </div>
-  
-        <Flex justify="space-between" align="flex-start" className={styles.header}>
+
+          <Flex justify="space-between" align="flex-start" className={styles.header}>
             <Space style={{ marginBottom: 16 }}>
               <Input
                 placeholder="Pesquisar por Nome ou Baia"
