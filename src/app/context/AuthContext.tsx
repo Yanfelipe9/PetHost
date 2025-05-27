@@ -11,6 +11,7 @@ interface AuthContextType {
   user: User | null;
   login: (userData: User & { token: string }) => void;
   logout: () => void;
+  getUser: () => User | null;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -43,12 +44,20 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
     }
   }
 
+  const getUser = () => {
+    const user = localStorage.getItem("user");
+    if (user) {
+      return JSON.parse(user);
+    }
+    return null;
+  }
+
   useEffect(() => {
     loadUser();
   }, [])
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, login, logout, getUser }}>
       {children}
     </AuthContext.Provider>
   );
