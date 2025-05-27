@@ -14,12 +14,19 @@ import Image from "next/image";
 const { TabPane } = Tabs;
 const { Title } = Typography;
 
+interface DetalhesSaldo {
+  entrada: number;
+  saida: number;
+  saldoLiquido: number;
+
+}
 const FinanceiroPage = () => {
   const { user } = useAuth();
   const [searchText, setSearchText] = useState("");
   const [agendamentos, setAgendamentos] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState("financas");
+  const [activeTab, setActiveTab] = useState("painel");
+  const [detalhesSaldo, setDetalhesSaldo] = useState<DetalhesSaldo>(null);
   const chartRef = useRef(null);
 
   useEffect(() => {
@@ -36,10 +43,12 @@ const FinanceiroPage = () => {
         setLoading(false);
       }
     };
-      const detalhes = async () => {
+
+    const detalhes = async () => {
             try {
                 const response = await api.get(`/visao-geral/detalhes-saldo/${user.userId}`);
                 console.log(response.data);
+                setDetalhesSaldo(response.data);
             } catch (error) {
                 console.error("Erro ao buscar detalhes:", error);
             }
@@ -137,7 +146,7 @@ const FinanceiroPage = () => {
           <div className={styles.cabecalho}>
             <Card style={{ width: '30%', background: 'rgba(21, 112, 239, 1)', color: 'white' }}>
               <h3>Saldo Liquido</h3>
-              <Title style={{  color: 'white' }}>$3120.54</Title>
+              <Title style={{  color: 'white' }}>R$ {detalhesSaldo?.saldoLiquido}</Title>
             </Card>
             <div className={styles.entrada_despesas}>
               <Card style={{ background: 'rgba(21, 112, 239, 1)', color: 'white', flex: 1}}>
@@ -145,7 +154,7 @@ const FinanceiroPage = () => {
                   <Image src={img} alt="icone" width={50} height={50} />
                   <div>
                   <h3 style={{ color: 'white', margin: 0 }}>Entrada</h3>
-                    <Title level={4} style={{ color: 'white', margin: 0 }}>$3120.54</Title>
+                    <Title level={4} style={{ color: 'white', margin: 0 }}>R$ {detalhesSaldo?.entrada}</Title>
                   </div>
                 </div>
               </Card>
@@ -155,28 +164,14 @@ const FinanceiroPage = () => {
                   <Image src={img} alt="icone" width={50} height={50} />
                   <div>
                     <h3 style={{ color: 'white', margin: 0 }}>Despesas</h3>
-                    <Title level={4} style={{  color: 'white' }}>$3120.54</Title>
+                    <Title level={4} style={{  color: 'white' }}>R$ {detalhesSaldo?.saida}</Title>
                   </div>
                 </div>
               </Card>
             </div>
-            <Card>
-              <FullCalendar
-                plugins={[ dayGridPlugin ]}
-                initialView="dayGridMonth"
-              />
-            </Card>
           </div>
-          {/* Grafico de barra de entradas e despesas */}
-          <Card className={styles.card}>
-            <Title level={5}>Últimas entradas/saídas</Title>
-            <p>Resumo das despesas de Jan a Dez</p>
-            <div ref={chartRef} style={{ minHeight: 350 }} />
-          </Card>
-        </TabPane>
-
-        <TabPane tab="Finanças" key="financas">
-          <Flex justify="space-between" align="flex-start" className={styles.header}>
+  
+        <Flex justify="space-between" align="flex-start" className={styles.header}>
             <Space style={{ marginBottom: 16 }}>
               <Input
                 placeholder="Pesquisar por Nome ou Baia"
