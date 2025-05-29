@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useContext, useState } from "react";
-import { LockOutlined, UserOutlined } from "@ant-design/icons";
-import { Button, Form, Input, Flex, Typography } from "antd";
+import { EllipsisOutlined, LoadingOutlined, LockOutlined, UserOutlined } from "@ant-design/icons";
+import { Button, Form, Input, Flex, Typography, Spin } from "antd";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
 import styles from "./form-login.module.css";
@@ -25,13 +25,15 @@ export default function FormLogin() {
       .then((response) => {
         login(response.data); // Salvando o usuário no contexto
         console.log("Login efetuado com sucesso:", response.data);
+        setLoading(false);
         router.push("/painel");
       })
       .catch((error) => {
+        setLoading(false);
         console.error("Erro ao efetuar login:", error);
       })
       .finally(() => setLoading(false));
-    setLoading(false);
+    
   };
 
   return (
@@ -52,9 +54,13 @@ export default function FormLogin() {
         <Input prefix={<LockOutlined />} type="password" placeholder="Senha" />
       </Form.Item>
       <Form.Item>
-        <Button block type="primary" htmlType="submit" loading={loading}>
-          Entrar
-        </Button>
+        <div className="flex">
+          <Button block loading={loading} type="primary" htmlType="submit" >
+            Entrar
+          </Button>
+        
+       {loading && <Spin indicator={<LoadingOutlined style={{ fontSize: 18 }} spin />} />}
+        </div>
       </Form.Item>
       <Form.Item>
         <Flex justify="center">
