@@ -26,6 +26,7 @@ interface statusMensal {
 interface DetalhesBaias {
   totalLimpas: number;
   totalSujas: number;
+  totalOcupadas: number;
 }
 export default function Dashboard() {
   const { user } = useAuth();
@@ -238,7 +239,7 @@ export default function Dashboard() {
     },
     {
       label: "Baias ocupadas",
-      value: dadosGerais.countBaiasOcupadas,
+      value: detalhesBaias?.totalOcupadas,
       description: "Total",
     },
   ];
